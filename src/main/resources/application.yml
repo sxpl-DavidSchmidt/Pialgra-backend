@@ -1,0 +1,12 @@
+spring:
+  application:
+    name=Pialgra-backend:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/mydatabase"
+    driver-class-name: org.postgresql.Driver
+    username: "myuser"
+    password: "secret"
+server:
+  port: 8080
+pialgra:
+  id: "Pialgra"
