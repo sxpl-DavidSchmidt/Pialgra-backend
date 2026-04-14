@@ -1,4 +1,4 @@
-package de.sxpl.pialgra_backend.entities;
+package de.sxpl.pialgra.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,9 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "categories")
+public class CategoryEntity {
     @Id
-    private UUID uuid;
-    private String username;
+    private UUID user_id;
+    private String name;
 }
