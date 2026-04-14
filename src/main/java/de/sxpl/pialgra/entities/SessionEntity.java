@@ -1,4 +1,4 @@
-package de.sxpl.pialgra_backend.entities;
+package de.sxpl.pialgra.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,15 +7,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "categories")
-public class CategoryEntity {
+@Table(name = "time_entry")
+public class SessionEntity {
     @Id
+    private UUID uuid;
     private UUID user_id;
-    private String name;
+    private UUID category_id;
+    private Date start;
+    private Date end;
 }

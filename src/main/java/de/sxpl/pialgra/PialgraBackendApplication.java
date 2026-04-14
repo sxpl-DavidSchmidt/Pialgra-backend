@@ -1,4 +1,4 @@
-package de.sxpl.pialgra_backend;
+package de.sxpl.pialgra;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

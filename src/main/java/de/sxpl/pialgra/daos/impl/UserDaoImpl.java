@@ -1,6 +1,6 @@
-package de.sxpl.pialgra_backend.daos.impl;
+package de.sxpl.pialgra.daos.impl;
 
-import de.sxpl.pialgra_backend.daos.UserDao;
+import de.sxpl.pialgra.daos.UserDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class UserDaoImpl implements UserDao {
