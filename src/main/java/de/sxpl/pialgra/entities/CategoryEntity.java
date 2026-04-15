@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "categories")
 public class CategoryEntity {
     @Id
-    private UUID caregory_id;
+    private UUID uuid;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private UserEntity user;

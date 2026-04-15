@@ -1,0 +1,32 @@
+package de.sxpl.pialgra.repositories;
+
+import de.sxpl.pialgra.entities.UserEntity;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+public class UserRepositoryTest {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserRepositoryTest(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Test
+    public void testCreatingUser() {
+        UserEntity userEntity = new UserEntity(null, "userName");
+        userRepository.save(userEntity);
+        Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(userEntity);
+    }
+}
