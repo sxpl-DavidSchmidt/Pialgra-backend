@@ -1,8 +1,6 @@
 package de.sxpl.pialgra.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +12,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "time_entry")
+@Table(name = "sessions")
 public class SessionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
-    private UUID user_id;
-    private UUID category_id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
+
     private Date start;
     private Date end;
 }
