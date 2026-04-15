@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -26,6 +27,6 @@ public class SessionEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    private Date start;
-    private Date end;
+    private LocalDateTime start_time;
+    private LocalDateTime end_time;
 }
