@@ -1,8 +1,6 @@
 package de.sxpl.pialgra.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +14,10 @@ import java.util.UUID;
 @Table(name = "categories")
 public class CategoryEntity {
     @Id
-    private UUID user_id;
+    private UUID uuid;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private UserEntity user;
+
     private String name;
 }
