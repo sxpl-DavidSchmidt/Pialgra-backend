@@ -5,7 +5,7 @@ spring:
     name: "Pialgra-backend"
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: "jdbc:postgresql://localhost:5432/mydatabase"
+    url: "jdbc:postgresql://localhost:5432/pialgradb"
     username: "postgres"
     password: "secret"
   jpa:
