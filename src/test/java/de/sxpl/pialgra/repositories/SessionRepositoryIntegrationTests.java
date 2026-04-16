@@ -36,8 +36,7 @@ public class SessionRepositoryIntegrationTests {
         sessionRepository.save(sessionEntity);
 
         Optional<SessionEntity> result = sessionRepository.findById(sessionEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(sessionEntity);
+        assertThat(result).contains(sessionEntity);
     }
 
     @Test
@@ -51,8 +50,7 @@ public class SessionRepositoryIntegrationTests {
         sessionRepository.save(sessionEntity);
 
         Optional<SessionEntity> result = sessionRepository.findById(sessionEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(sessionEntity);
+        assertThat(result).contains(sessionEntity);
     }
 
     @Test
@@ -69,8 +67,7 @@ public class SessionRepositoryIntegrationTests {
         sessionRepository.save(sessionEntity);
 
         Optional<SessionEntity> result = sessionRepository.findById(sessionEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(sessionEntity);
+        assertThat(result).contains(sessionEntity);
     }
 
     @Test
