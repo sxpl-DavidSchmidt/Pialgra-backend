@@ -3,6 +3,7 @@ server:
 spring:
   application:
     name: "Pialgra-backend"
+    version:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql://localhost:5432/pialgradb"
