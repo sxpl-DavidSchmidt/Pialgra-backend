@@ -31,8 +31,7 @@ public class CategoryRepositoryIntegrationTests {
         categoryRepository.save(categoryEntity);
 
         Optional<CategoryEntity> result = categoryRepository.findById(categoryEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(categoryEntity);
+        assertThat(result).contains(categoryEntity);
     }
 
     @Test
@@ -43,8 +42,7 @@ public class CategoryRepositoryIntegrationTests {
         categoryRepository.save(categoryEntity);
 
         Optional<CategoryEntity> result = categoryRepository.findById(categoryEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("category");
+        assertThat(result).contains(categoryEntity);
     }
 
     @Test
@@ -58,8 +56,7 @@ public class CategoryRepositoryIntegrationTests {
         categoryRepository.save(categoryEntity);
 
         Optional<CategoryEntity> result = categoryRepository.findById(categoryEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(categoryEntity);
+        assertThat(result).contains(categoryEntity);
     }
 
     @Test

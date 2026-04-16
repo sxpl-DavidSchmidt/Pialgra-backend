@@ -28,8 +28,7 @@ public class UserRepositoryIntegrationTests {
         userRepository.save(userEntity);
 
         Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(userEntity);
+        assertThat(result).contains(userEntity);
     }
 
     @Test
@@ -38,8 +37,7 @@ public class UserRepositoryIntegrationTests {
         userRepository.save(userEntity);
 
         Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(userEntity);
+        assertThat(result).contains(userEntity);
     }
 
     @Test
@@ -51,8 +49,7 @@ public class UserRepositoryIntegrationTests {
         userRepository.save(userEntity);
 
         Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(userEntity);
+        assertThat(result).contains(userEntity);
     }
 
     @Test
