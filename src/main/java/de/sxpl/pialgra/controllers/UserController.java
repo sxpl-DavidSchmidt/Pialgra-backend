@@ -4,7 +4,6 @@ import de.sxpl.pialgra.domain.dtos.UserDto;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.Mapper;
 import de.sxpl.pialgra.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
