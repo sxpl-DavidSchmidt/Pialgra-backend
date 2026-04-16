@@ -1,9 +1,9 @@
 package de.sxpl.pialgra.repositories;
 
 import de.sxpl.pialgra.TestDataUtility;
-import de.sxpl.pialgra.entities.CategoryEntity;
-import de.sxpl.pialgra.entities.SessionEntity;
-import de.sxpl.pialgra.entities.UserEntity;
+import de.sxpl.pialgra.domain.entities.CategoryEntity;
+import de.sxpl.pialgra.domain.entities.SessionEntity;
+import de.sxpl.pialgra.domain.entities.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
