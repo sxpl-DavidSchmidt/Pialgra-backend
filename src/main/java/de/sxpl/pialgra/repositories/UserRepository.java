@@ -1,6 +1,6 @@
 package de.sxpl.pialgra.repositories;
 
-import de.sxpl.pialgra.entities.UserEntity;
+import de.sxpl.pialgra.domain.entities.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
