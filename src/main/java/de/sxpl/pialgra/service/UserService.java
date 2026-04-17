@@ -8,5 +8,6 @@ import java.util.List;
 @Service
 public interface UserService {
     List<UserEntity> getUsers();
+    List<UserEntity> getUsersByUsername(String username);
     UserEntity createUser(UserEntity user);
 }

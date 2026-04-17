@@ -24,6 +24,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserEntity> getUsersByUsername(String username) {
+        return StreamSupport
+                .stream(userRepository.findAllByUsername(username).spliterator(), false)
+                .toList();
+    }
+
+    @Override
     public UserEntity createUser(UserEntity userEntity) {
         return userRepository.save(userEntity);
     }
