@@ -1,20 +1,17 @@
-package de.sxpl.pialgra.entities;
+package de.sxpl.pialgra.domain.dtos;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
-public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class UserDto {
     private UUID uuid;
     private String username;
+    private LocalDate createdAt;
 }

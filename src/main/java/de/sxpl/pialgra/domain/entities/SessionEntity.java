@@ -1,4 +1,4 @@
-package de.sxpl.pialgra.entities;
+package de.sxpl.pialgra.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
