@@ -1,4 +1,4 @@
-package de.sxpl.pialgra.entities;
+package de.sxpl.pialgra.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,7 @@ import java.util.UUID;
 @Table(name = "categories")
 public class CategoryEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
     @ManyToOne(cascade = CascadeType.ALL)
