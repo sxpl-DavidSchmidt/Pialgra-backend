@@ -6,6 +6,7 @@ import de.sxpl.pialgra.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -24,10 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getUsersByUsername(String username) {
-        return StreamSupport
-                .stream(userRepository.findAllByUsername(username).spliterator(), false)
-                .toList();
+    public Optional<UserEntity> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
