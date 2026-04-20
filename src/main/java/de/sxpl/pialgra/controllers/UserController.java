@@ -22,22 +22,14 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers(
-            @RequestParam(required = false) String username
-    ) {
-        List<UserDto> users;
-        if (username != null) {
-            users = userService.getUsersByUsername(username)
-                    .stream()
-                    .map(userMapper::mapTo)
-                    .toList();
-        } else {
-            users = userService.getUsers()
-                    .stream()
-                    .map(userMapper::mapTo)
-                    .toList();
-        }
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserDto>> getUsers() {
+        return ResponseEntity.ok(
+                userService
+                        .getUsers()
+                        .stream()
+                        .map(userMapper::mapTo)
+                        .toList()
+        );
     }
 
     @PostMapping(path = "/create")
