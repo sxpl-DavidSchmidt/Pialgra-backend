@@ -7,8 +7,15 @@ import de.sxpl.pialgra.domain.entities.UserEntity;
 import java.time.LocalDateTime;
 
 public class TestDataUtility {
+    private static int userCounter = 0;
+
     public static UserEntity generateUser() {
-        return new UserEntity(null, "username");
+        return new UserEntity(
+                null,
+                "username" + userCounter++,
+                "password",
+                null
+        );
     }
 
     public static CategoryEntity generateCategory() {

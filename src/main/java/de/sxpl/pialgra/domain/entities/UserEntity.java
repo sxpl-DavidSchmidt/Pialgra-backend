@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -25,10 +25,10 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false)
-    LocalDateTime createdAt;
+    LocalDate createdAt;
 
     @PrePersist
     private void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDate.now();
     }
 }

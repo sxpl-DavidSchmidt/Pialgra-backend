@@ -1,9 +1,7 @@
 package de.sxpl.pialgra.security;
 
 import de.sxpl.pialgra.domain.entities.UserEntity;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
