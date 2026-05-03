@@ -13,6 +13,7 @@ public class DomainUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
+    @NonNull
     public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));

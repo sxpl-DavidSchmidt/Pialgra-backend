@@ -1,6 +1,7 @@
 package de.sxpl.pialgra.security;
 
 import de.sxpl.pialgra.domain.entities.UserEntity;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,16 +15,19 @@ public class DomainUserDetails implements UserDetails {
     private final UserEntity userEntity;
 
     @Override
+    @NonNull
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
+    @NonNull
     public String getPassword() {
         return userEntity.getPassword();
     }
 
     @Override
+    @NonNull
     public String getUsername() {
         return userEntity.getUsername();
     }
