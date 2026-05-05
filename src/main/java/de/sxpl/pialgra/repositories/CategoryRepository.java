@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<CategoryEntity, UUID> {
-    Iterable<CategoryEntity> getByUser(UserEntity user);
+    Iterable<CategoryEntity> findByUser(UserEntity user);
 }

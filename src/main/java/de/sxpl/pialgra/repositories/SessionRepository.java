@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface SessionRepository extends CrudRepository<SessionEntity, UUID> {
-    Iterable<SessionEntity> getByUser(UserEntity user);
-    Iterable<SessionEntity> getByUserAndStartTimeAfter(UserEntity user, LocalDateTime startTimeAfter);
-    Iterable<SessionEntity> getByUserAndCategoryAndStartTimeAfter(UserEntity user, CategoryEntity category, LocalDateTime startTimeAfter);
+    Iterable<SessionEntity> findByUser(UserEntity user);
+    Iterable<SessionEntity> findByUserAndStartTimeAfter(UserEntity user, LocalDateTime startTimeAfter);
+    Iterable<SessionEntity> findByUserAndCategoryAndStartTimeAfter(UserEntity user, CategoryEntity category, LocalDateTime startTimeAfter);
 }
