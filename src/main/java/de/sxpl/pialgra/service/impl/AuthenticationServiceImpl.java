@@ -19,8 +19,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserDetailsService userDetailsService;
     private final String secretKey;
 
-    private final long tokenExpirationTimeMs = (24 * 60 * 60) * 1000L;
-
     public AuthenticationServiceImpl(
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
@@ -45,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + tokenExpirationTimeMs))
+                .expiration(new Date(now.getTime() + (24 * 60 * 60) * 1000L))
                 .signWith(getSigningKey())
                 .compact();
     }
