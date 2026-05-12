@@ -15,7 +15,7 @@ public class PialgraUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
