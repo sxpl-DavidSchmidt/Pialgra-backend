@@ -1,12 +1,9 @@
 package de.sxpl.pialgra.controllers;
 
 import de.sxpl.pialgra.domain.dtos.SessionDto;
-import de.sxpl.pialgra.domain.dtos.UserDto;
 import de.sxpl.pialgra.domain.entities.SessionEntity;
-import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.Mapper;
 import de.sxpl.pialgra.service.SessionService;
-import de.sxpl.pialgra.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
