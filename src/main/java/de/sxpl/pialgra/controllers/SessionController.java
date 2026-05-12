@@ -18,10 +18,8 @@ import java.util.List;
 @RequestMapping("/api/v1/sessions")
 @RequiredArgsConstructor
 public class SessionController {
-    private final UserService userService;
     private final SessionService sessionService;
     private final Mapper<SessionEntity, SessionDto> sessionMapper;
-    private final Mapper<UserEntity, UserDto> userMapper;
 
     @GetMapping("/{username}")
     public ResponseEntity<List<SessionDto>> getSessionsByUsername(@PathVariable String username) {

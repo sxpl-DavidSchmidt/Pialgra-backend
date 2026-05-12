@@ -1,6 +1,5 @@
 package de.sxpl.pialgra.domain.dtos;
 
-import de.sxpl.pialgra.domain.entities.CategoryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
