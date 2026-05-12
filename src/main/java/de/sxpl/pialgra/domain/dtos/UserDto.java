@@ -11,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private UUID uuid;
     private String username;
     private LocalDate createdAt;
 }

@@ -1,6 +1,7 @@
 package de.sxpl.pialgra.security;
 
 import de.sxpl.pialgra.domain.entities.UserEntity;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 @RequiredArgsConstructor
 public class PialgraUserDetails implements UserDetails {
     private final UserEntity userEntity;

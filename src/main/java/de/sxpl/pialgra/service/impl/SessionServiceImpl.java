@@ -6,11 +6,13 @@ import de.sxpl.pialgra.repositories.SessionRepository;
 import de.sxpl.pialgra.repositories.UserRepository;
 import de.sxpl.pialgra.service.SessionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+@Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
     private final UserRepository userRepository;
