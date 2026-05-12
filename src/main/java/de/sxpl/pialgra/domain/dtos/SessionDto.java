@@ -13,8 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SessionDto {
     private UUID uuid;
-    private UserDto user;
-    private CategoryEntity category;
+    private CategoryDto category;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 }

@@ -3,6 +3,7 @@ package de.sxpl.pialgra.service.impl;
 import de.sxpl.pialgra.service.AuthenticationService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,20 +15,13 @@ import java.security.Key;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final String secretKey;
 
-    public AuthenticationServiceImpl(
-            AuthenticationManager authenticationManager,
-            UserDetailsService userDetailsService,
-            @Value("${jwt.secret-key}") String secretKey
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.secretKey = secretKey;
-    }
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
     @Override
     public UserDetails authenticate(String username, String password) {

@@ -1,9 +1,12 @@
 package de.sxpl.pialgra.controllers;
 
 import de.sxpl.pialgra.domain.dtos.SessionDto;
+import de.sxpl.pialgra.domain.dtos.UserDto;
 import de.sxpl.pialgra.domain.entities.SessionEntity;
+import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.Mapper;
 import de.sxpl.pialgra.service.SessionService;
+import de.sxpl.pialgra.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +18,10 @@ import java.util.List;
 @RequestMapping("/api/v1/sessions")
 @RequiredArgsConstructor
 public class SessionController {
+    private final UserService userService;
     private final SessionService sessionService;
     private final Mapper<SessionEntity, SessionDto> sessionMapper;
+    private final Mapper<UserEntity, UserDto> userMapper;
 
     @GetMapping("/{username}")
     public ResponseEntity<List<SessionDto>> getSessionsByUsername(@PathVariable String username) {
