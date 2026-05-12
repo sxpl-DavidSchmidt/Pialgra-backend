@@ -26,9 +26,9 @@ public class SessionEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = true)
     private LocalDateTime endTime;
 }
