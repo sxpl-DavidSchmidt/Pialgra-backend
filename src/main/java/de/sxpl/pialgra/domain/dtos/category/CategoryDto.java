@@ -1,9 +1,6 @@
 package de.sxpl.pialgra.domain.dtos.category;
 
 import de.sxpl.pialgra.domain.dtos.user.UserDto;
-import de.sxpl.pialgra.domain.entities.UserEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

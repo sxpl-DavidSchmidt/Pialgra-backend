@@ -4,7 +4,6 @@ import de.sxpl.pialgra.domain.dtos.category.CategoryDto;
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.mappers.UserMapper;
-import de.sxpl.pialgra.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
