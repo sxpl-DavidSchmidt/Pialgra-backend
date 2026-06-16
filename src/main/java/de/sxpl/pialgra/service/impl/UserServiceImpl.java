@@ -22,14 +22,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getUsers() {
+    public List<UserEntity> findAll() {
         return StreamSupport
                 .stream(userRepository.findAll().spliterator(), false)
                 .toList();
     }
 
     @Override
-    public Optional<UserEntity> getUserByUsername(String username) {
+    public Optional<UserEntity> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 

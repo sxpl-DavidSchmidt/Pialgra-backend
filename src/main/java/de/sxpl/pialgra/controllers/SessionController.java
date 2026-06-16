@@ -28,12 +28,6 @@ public class SessionController {
         return ResponseEntity.ok(sessions);
     }
 
-    @GetMapping("/{username}/current")
-    public ResponseEntity<SessionDto> getCurrentSessionByUsername(@PathVariable String username) {
-        SessionEntity session = sessionService.findCurrentByUsername(username).orElseThrow();
-        return ResponseEntity.ok(sessionMapper.sessionDtoFromSessionEntity(session));
-    }
-
     @PostMapping
     public ResponseEntity<SessionDto> createSession(@RequestBody CreateSessionDto session) {
         SessionEntity sessionEntity = sessionMapper.entityFromCreateSessionDto(session);

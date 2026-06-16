@@ -1,16 +1,32 @@
 package de.sxpl.pialgra.mappers.impl;
 
 import de.sxpl.pialgra.domain.dtos.category.CategoryDto;
+import de.sxpl.pialgra.domain.dtos.category.CreateCategoryDto;
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
+import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.mappers.UserMapper;
+import de.sxpl.pialgra.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CategoryMapperImpl implements CategoryMapper {
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    @Override
+    public CategoryEntity entityFromCreateCategoryDto(CreateCategoryDto createCategoryDto) {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setName(createCategoryDto.getName());
+
+        UserEntity userEntity = userRepository
+                .findByUsername(createCategoryDto.getUsername())
+                .orElseThrow();
+        categoryEntity.setUser(userEntity);
+        return categoryEntity;
+    }
 
     @Override
     public CategoryDto categoryDtoFromCategoryEntity(CategoryEntity categoryEntity) {
