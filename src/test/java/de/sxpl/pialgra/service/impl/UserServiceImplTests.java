@@ -39,6 +39,8 @@ class UserServiceImplTests {
         verify(userRepository).save(captor.capture());
 
         assertThat(captor.getValue().getPassword()).isEqualTo("{bcrypt}encoded-password");
+        assertThat(captor.getValue().getCreatedAt()).isNotNull();
         assertThat(result.getPassword()).isEqualTo("{bcrypt}encoded-password");
+        assertThat(result.getCreatedAt()).isNotNull();
     }
 }
