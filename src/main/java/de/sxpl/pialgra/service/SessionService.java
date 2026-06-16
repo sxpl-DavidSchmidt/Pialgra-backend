@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Service
 public interface SessionService {
+    List<SessionEntity> findAll();
     List<SessionEntity> findByUsername(String username);
     Optional<SessionEntity> findCurrentByUsername(String username);
     SessionEntity createSession(SessionEntity session);

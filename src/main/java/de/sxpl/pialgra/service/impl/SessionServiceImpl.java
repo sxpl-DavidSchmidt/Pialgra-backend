@@ -19,6 +19,13 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
+    public List<SessionEntity> findAll() {
+        return StreamSupport
+                .stream(sessionRepository.findAll().spliterator(), false)
+                .toList();
+    }
+
+    @Override
     public List<SessionEntity> findByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
         return StreamSupport

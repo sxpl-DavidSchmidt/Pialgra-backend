@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Service
 public interface UserService {
-    List<UserEntity> getUsers();
-    Optional<UserEntity> getUserByUsername(String username);
+    List<UserEntity> findAll();
+    Optional<UserEntity> findByUsername(String username);
     UserEntity createUser(UserEntity user);
 }
