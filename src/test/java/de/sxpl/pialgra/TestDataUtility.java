@@ -10,12 +10,10 @@ public class TestDataUtility {
     private static int userCounter = 0;
 
     public static UserEntity generateUser() {
-        return new UserEntity(
-                null,
-                "username" + userCounter++,
-                "password",
-                null
-        );
+        UserEntity entity = new UserEntity();
+        entity.setUsername("username" + userCounter++);
+        entity.setPassword("password");
+        return entity;
     }
 
     public static CategoryEntity generateCategory() {

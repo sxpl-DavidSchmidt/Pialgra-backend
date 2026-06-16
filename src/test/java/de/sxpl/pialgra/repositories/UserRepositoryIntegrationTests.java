@@ -27,8 +27,11 @@ public class UserRepositoryIntegrationTests {
         UserEntity userEntity = TestDataUtility.generateUser();
         userRepository.save(userEntity);
 
-        Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).contains(userEntity);
+        Optional<UserEntity> result = userRepository.findByUsername(userEntity.getUsername());
+        assertThat(result).isPresent();
+        assertThat(result.get().getUsername()).isEqualTo(userEntity.getUsername());
+        assertThat(result.get().getPassword()).isEqualTo(userEntity.getPassword());
+        assertThat(result.get().getCreatedAt()).isNotNull();
     }
 
     @Test
@@ -36,20 +39,26 @@ public class UserRepositoryIntegrationTests {
         UserEntity userEntity = TestDataUtility.generateUser();
         userRepository.save(userEntity);
 
-        Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).contains(userEntity);
+        Optional<UserEntity> result = userRepository.findByUsername(userEntity.getUsername());
+        assertThat(result).isPresent();
+        assertThat(result.get().getUsername()).isEqualTo(userEntity.getUsername());
+        assertThat(result.get().getPassword()).isEqualTo(userEntity.getPassword());
+        assertThat(result.get().getCreatedAt()).isNotNull();
     }
 
     @Test
     public void testUpdatingUser() {
         UserEntity userEntity = TestDataUtility.generateUser();
-        userRepository.save(userEntity);
+        UserEntity savedUser = userRepository.save(userEntity);
 
-        userEntity.setUsername("updatedName");
-        userRepository.save(userEntity);
+        savedUser.setPassword("updatedPassword");
+        userRepository.save(savedUser);
 
-        Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
-        assertThat(result).contains(userEntity);
+        Optional<UserEntity> result = userRepository.findByUsername(savedUser.getUsername());
+        assertThat(result).isPresent();
+        assertThat(result.get().getUsername()).isEqualTo(savedUser.getUsername());
+        assertThat(result.get().getPassword()).isEqualTo("updatedPassword");
+        assertThat(result.get().getCreatedAt()).isNotNull();
     }
 
     @Test
@@ -57,9 +66,9 @@ public class UserRepositoryIntegrationTests {
         UserEntity userEntity = TestDataUtility.generateUser();
         userRepository.save(userEntity);
 
-        userRepository.deleteById(userEntity.getUuid());
+        userRepository.delete(userEntity);
 
-        Optional<UserEntity> result = userRepository.findById(userEntity.getUuid());
+        Optional<UserEntity> result = userRepository.findByUsername(userEntity.getUsername());
         assertThat(result).isEmpty();
     }
 }
