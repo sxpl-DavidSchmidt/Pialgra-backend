@@ -1,0 +1,17 @@
+package de.sxpl.pialgra.domain.dtos.session;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateSessionDto {
+    private String username;
+    private UUID categoryUuid;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+}

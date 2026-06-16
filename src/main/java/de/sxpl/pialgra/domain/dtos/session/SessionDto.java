@@ -1,5 +1,7 @@
-package de.sxpl.pialgra.domain.dtos;
+package de.sxpl.pialgra.domain.dtos.session;
 
+import de.sxpl.pialgra.domain.dtos.category.CategoryDto;
+import de.sxpl.pialgra.domain.dtos.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SessionDto {
     private UUID uuid;
+    private UserDto user;
     private CategoryDto category;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

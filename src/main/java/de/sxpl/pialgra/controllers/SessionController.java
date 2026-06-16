@@ -1,8 +1,9 @@
 package de.sxpl.pialgra.controllers;
 
-import de.sxpl.pialgra.domain.dtos.SessionDto;
+import de.sxpl.pialgra.domain.dtos.session.CreateSessionDto;
+import de.sxpl.pialgra.domain.dtos.session.SessionDto;
 import de.sxpl.pialgra.domain.entities.SessionEntity;
-import de.sxpl.pialgra.mappers.Mapper;
+import de.sxpl.pialgra.mappers.SessionMapper;
 import de.sxpl.pialgra.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SessionController {
     private final SessionService sessionService;
-    private final Mapper<SessionEntity, SessionDto> sessionMapper;
+    private final SessionMapper sessionMapper;
 
     @GetMapping("/{username}")
     public ResponseEntity<List<SessionDto>> getSessionsByUsername(@PathVariable String username) {
         List<SessionDto> sessions = sessionService.findByUsername(username)
                 .stream()
-                .map(sessionMapper::mapTo)
+                .map(sessionMapper::sessionDtoFromSessionEntity)
                 .toList();
         return ResponseEntity.ok(sessions);
     }
@@ -30,15 +31,15 @@ public class SessionController {
     @GetMapping("/{username}/current")
     public ResponseEntity<SessionDto> getCurrentSessionByUsername(@PathVariable String username) {
         SessionEntity session = sessionService.findCurrentByUsername(username).orElseThrow();
-        return ResponseEntity.ok(sessionMapper.mapTo(session));
+        return ResponseEntity.ok(sessionMapper.sessionDtoFromSessionEntity(session));
     }
 
     @PostMapping
-    public ResponseEntity<SessionDto> createSession(@RequestBody SessionDto session) {
-        SessionEntity sessionEntity = sessionMapper.mapFrom(session);
+    public ResponseEntity<SessionDto> createSession(@RequestBody CreateSessionDto session) {
+        SessionEntity sessionEntity = sessionMapper.entityFromCreateSessionDto(session);
         SessionEntity savedSessionEntity = sessionService.createSession(sessionEntity);
         return new ResponseEntity<>(
-                sessionMapper.mapTo(savedSessionEntity),
+                sessionMapper.sessionDtoFromSessionEntity(savedSessionEntity),
                 HttpStatus.CREATED
         );
     }
