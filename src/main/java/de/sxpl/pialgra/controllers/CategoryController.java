@@ -8,6 +8,7 @@ import de.sxpl.pialgra.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,14 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final CategoryMapper CategoryMapper;
     private final CategoryMapper categoryMapper;
 
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getCategories() {
         List<CategoryDto> categories = categoryService.findAll()
                 .stream()
-                .map(CategoryMapper::categoryDtoFromCategoryEntity)
+                .map(categoryMapper::categoryDtoFromCategoryEntity)
                 .toList();
         return ResponseEntity.ok(categories);
     }
@@ -33,15 +33,24 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getCategoriesByUsername(@PathVariable String username) {
         List<CategoryDto> categories = categoryService.findByUsername(username)
                 .stream()
-                .map(CategoryMapper::categoryDtoFromCategoryEntity)
+                .map(categoryMapper::categoryDtoFromCategoryEntity)
                 .toList();
         return ResponseEntity.ok(categories);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CreateCategoryDto categoryDto) {
-        CategoryEntity categoryEntity = CategoryMapper.entityFromCreateCategoryDto(categoryDto);
-        CategoryEntity savedCategoryEntity = categoryService.createCategory(categoryEntity);
+    public ResponseEntity<CategoryDto> createCategory(
+            @RequestBody CreateCategoryDto categoryDto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+
+        CategoryEntity entity =
+                categoryMapper.entityFromCreateCategoryDto(categoryDto);
+
+        CategoryEntity savedCategoryEntity =
+                categoryService.createCategory(entity, username);
+
         return new ResponseEntity<>(
                 categoryMapper.categoryDtoFromCategoryEntity(savedCategoryEntity),
                 HttpStatus.CREATED

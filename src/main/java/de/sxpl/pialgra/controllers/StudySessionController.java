@@ -8,6 +8,7 @@ import de.sxpl.pialgra.service.StudySessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +29,21 @@ public class StudySessionController {
         return ResponseEntity.ok(studySessions);
     }
 
-    @PostMapping
-    public ResponseEntity<StudySessionDto> createStudySession(@RequestBody CreateStudySessionDto studySession) {
-        StudySessionEntity studySessionEntity = studySessionMapper.entityFromCreateStudySessionDto(studySession);
-        StudySessionEntity savedStudySessionEntity = studySessionService.createStudySession(studySessionEntity);
-        return new ResponseEntity<>(
-                studySessionMapper.studySessionDtoFromStudySessionEntity(savedStudySessionEntity),
-                HttpStatus.CREATED
-        );
+    @PostMapping("/create")
+    public ResponseEntity<StudySessionDto> createStudySession(
+            @RequestBody CreateStudySessionDto studySession,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+
+        StudySessionEntity entity =
+                studySessionMapper.entityFromCreateStudySessionDto(studySession);
+
+        StudySessionEntity saved =
+                studySessionService.createStudySession(entity, username);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(studySessionMapper.studySessionDtoFromStudySessionEntity(saved));
     }
 }

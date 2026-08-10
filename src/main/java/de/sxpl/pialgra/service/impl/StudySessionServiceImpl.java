@@ -6,12 +6,15 @@ import de.sxpl.pialgra.repositories.StudySessionRepository;
 import de.sxpl.pialgra.repositories.UserRepository;
 import de.sxpl.pialgra.service.StudySessionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StudySessionServiceImpl implements StudySessionService {
@@ -19,31 +22,26 @@ public class StudySessionServiceImpl implements StudySessionService {
     private final StudySessionRepository studySessionRepository;
 
     @Override
-    public List<StudySessionEntity> findAll() {
-        return StreamSupport
-                .stream(studySessionRepository.findAll().spliterator(), false)
-                .toList();
-    }
-
-    @Override
-    public List<StudySessionEntity> findByUsername(String username) {
+    public List<StudySessionEntity> findByUsername(
+            String username
+    ) {
         UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
         return StreamSupport
                 .stream(studySessionRepository.findByUser(userEntity).spliterator(), false)
                 .toList();
     }
 
+    @Transactional
     @Override
-    public Optional<StudySessionEntity> findCurrentByUsername(String username) {
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
-        return StreamSupport
-                .stream(studySessionRepository.findByUser(userEntity).spliterator(), false)
-                .filter(entity -> entity.getEndTime() == null)
-                .findFirst();
-    }
-
-    @Override
-    public StudySessionEntity createStudySession(StudySessionEntity studySession) {
+    public StudySessionEntity createStudySession(
+            StudySessionEntity studySession,
+            String username
+    ) {
+        log.info("Creating study session for user {}", username);
+        UserEntity userEntity = userRepository
+                .findByUsername(username)
+                .orElseThrow();
+        studySession.setUser(userEntity);
         return studySessionRepository.save(studySession);
     }
 }

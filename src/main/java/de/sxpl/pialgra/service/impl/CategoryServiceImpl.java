@@ -33,7 +33,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryEntity createCategory(CategoryEntity category) {
+    public CategoryEntity createCategory(
+            CategoryEntity category,
+            String username
+    ) {
+        UserEntity userEntity = userRepository
+                .findByUsername(username)
+                .orElseThrow();
+        category.setUser(userEntity);
         return categoryRepository.save(category);
     }
 }

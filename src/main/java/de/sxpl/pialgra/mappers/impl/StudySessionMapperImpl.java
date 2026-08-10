@@ -27,11 +27,6 @@ public class StudySessionMapperImpl implements StudySessionMapper {
     public StudySessionEntity entityFromCreateStudySessionDto(CreateStudySessionDto createStudySessionDto) {
         StudySessionEntity studySessionEntity = new StudySessionEntity();
 
-        UserEntity userEntity = userRepository
-                .findByUsername(createStudySessionDto.getUsername())
-                .orElseThrow();
-        studySessionEntity.setUser(userEntity);
-
         CategoryEntity categoryEntity = categoryRepository
                 .findById(createStudySessionDto.getCategoryUuid())
                 .orElseThrow();
