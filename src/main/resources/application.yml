@@ -1,5 +1,8 @@
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 30m
 spring:
   application:
     name: "Pialgra-backend"
@@ -11,5 +14,11 @@ spring:
   jpa:
      hibernate:
       ddl-auto: update
-jwt:
-  secret-key: "your-secret-key-here"
+  session:
+    jdbc:
+      initialize-schema: always
+app:
+  session:
+    cookie:
+      # Set to true once the API is served over HTTPS.
+      secure: false

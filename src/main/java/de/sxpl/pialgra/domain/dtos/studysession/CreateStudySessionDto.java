@@ -1,4 +1,5 @@
-package de.sxpl.pialgra.domain.dtos.session;
+package de.sxpl.pialgra.domain.dtos.studysession;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateSessionDto {
+public class CreateStudySessionDto {
     private String username;
     private UUID categoryUuid;
     private LocalDateTime startTime;
