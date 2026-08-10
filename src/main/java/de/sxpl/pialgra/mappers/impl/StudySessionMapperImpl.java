@@ -6,7 +6,6 @@ import de.sxpl.pialgra.domain.dtos.studysession.StudySessionDto;
 import de.sxpl.pialgra.domain.dtos.user.UserDto;
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
 import de.sxpl.pialgra.domain.entities.StudySessionEntity;
-import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.mappers.StudySessionMapper;
 import de.sxpl.pialgra.mappers.UserMapper;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class StudySessionMapperImpl implements StudySessionMapper {
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;

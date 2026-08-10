@@ -3,7 +3,6 @@ package de.sxpl.pialgra.mappers.impl;
 import de.sxpl.pialgra.domain.dtos.category.CategoryDto;
 import de.sxpl.pialgra.domain.dtos.category.CreateCategoryDto;
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
-import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.mappers.UserMapper;
 import de.sxpl.pialgra.repositories.UserRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CategoryMapperImpl implements CategoryMapper {
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
