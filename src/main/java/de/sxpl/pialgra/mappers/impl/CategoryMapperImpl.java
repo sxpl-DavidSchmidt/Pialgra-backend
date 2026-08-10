@@ -20,11 +20,6 @@ public class CategoryMapperImpl implements CategoryMapper {
     public CategoryEntity entityFromCreateCategoryDto(CreateCategoryDto createCategoryDto) {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setName(createCategoryDto.getName());
-
-        UserEntity userEntity = userRepository
-                .findByUsername(createCategoryDto.getUsername())
-                .orElseThrow();
-        categoryEntity.setUser(userEntity);
         return categoryEntity;
     }
 

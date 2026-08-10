@@ -11,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateStudySessionDto {
-    private String username;
     private UUID categoryUuid;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

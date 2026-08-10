@@ -26,8 +26,6 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Sessions live in the SPRING_SESSION table (spring-session-jdbc) and are
-                // addressed by the HttpOnly SESSION cookie configured in application.yml.
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
@@ -39,7 +37,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // Logout is handled by AuthController so the whole auth API lives in one place.
                 .logout(AbstractHttpConfigurer::disable);
         return http.build();
     }
