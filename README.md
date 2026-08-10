@@ -14,18 +14,8 @@ The backend is responsible for:
 - **Framework:** Spring Boot
 - **Database:** PostgreSQL
 
-## Database
-The schema is managed by Hibernate (`spring.jpa.hibernate.ddl-auto=update`), which only
-ever adds to the schema. Renames therefore have to be applied by hand before the next
-start, otherwise Hibernate creates a new empty table and the old rows are left behind.
-
-Pending for existing databases:
-```sql
-ALTER TABLE sessions RENAME TO study_sessions;
-```
-
 ## Authentication
-Authentication is session based. Logging in returns an HttpOnly `SESSION` cookie; the
+Authentication is session-based. Logging in returns an HttpOnly `SESSION` cookie; the
 session itself is stored in the `SPRING_SESSION` table via Spring Session JDBC, so it
 survives application restarts. Send the cookie with every subsequent request.
 
