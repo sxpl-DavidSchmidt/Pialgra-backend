@@ -7,6 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-
-jwt:
-  secret-key: "0123456789012345678901234567890123456789012345678901234567890123"
+  session:
+    jdbc:
+      initialize-schema: always
