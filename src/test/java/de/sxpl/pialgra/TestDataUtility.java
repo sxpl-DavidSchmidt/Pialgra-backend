@@ -1,7 +1,7 @@
 package de.sxpl.pialgra;
 
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
-import de.sxpl.pialgra.domain.entities.SessionEntity;
+import de.sxpl.pialgra.domain.entities.StudySessionEntity;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 
 import java.time.LocalDateTime;
@@ -24,8 +24,8 @@ public class TestDataUtility {
         );
     }
 
-    public static SessionEntity generateSession() {
-        return new SessionEntity(
+    public static StudySessionEntity generateStudySession() {
+        return new StudySessionEntity(
                 null,
                 null,
                 null,
