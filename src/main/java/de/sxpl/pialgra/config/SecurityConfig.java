@@ -19,11 +19,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll()
-                        .requestMatchers("/actuator/health/**").permitAll()
+                        .requestMatchers("/api/auth/*").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -32,8 +32,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
-                // TODO: enable CSRF (CookieCsrfTokenRepository) and CORS for the Vite dev
-                // server on http://localhost:5173 before this leaves local testing.
+                // TODO: enable CSRF (CookieCsrfTokenRepository) and CORS
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -47,7 +46,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {
         return config.getAuthenticationManager();
     }
 }
