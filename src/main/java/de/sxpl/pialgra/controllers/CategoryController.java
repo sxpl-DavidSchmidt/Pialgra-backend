@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(path = "/api/v1/categories")
 @RequiredArgsConstructor
@@ -20,25 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
-    @GetMapping
-    public ResponseEntity<List<CategoryDto>> getCategories() {
-        List<CategoryDto> categories = categoryService.findAll()
-                .stream()
-                .map(categoryMapper::categoryDtoFromCategoryEntity)
-                .toList();
-        return ResponseEntity.ok(categories);
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<List<CategoryDto>> getCategoriesByUsername(@PathVariable String username) {
-        List<CategoryDto> categories = categoryService.findByUsername(username)
-                .stream()
-                .map(categoryMapper::categoryDtoFromCategoryEntity)
-                .toList();
-        return ResponseEntity.ok(categories);
-    }
-
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CategoryDto> createCategory(
             @RequestBody CreateCategoryDto categoryDto,
             Authentication authentication

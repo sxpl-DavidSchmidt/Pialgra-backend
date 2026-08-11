@@ -22,8 +22,7 @@ public class SessionCookieConfig {
             cookieSerializer.setCookiePath("/");
             cookieSerializer.setUseHttpOnlyCookie(true);
             cookieSerializer.setSameSite("Lax");
-            // Must be true once the API is served over HTTPS; see app.session.cookie.secure.
-            cookieSerializer.setUseSecureCookie(secure);
+            cookieSerializer.setUseSecureCookie(secure); // Set true once the API is served over HTTPS
         };
     }
 }

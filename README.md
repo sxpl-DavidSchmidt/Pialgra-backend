@@ -19,7 +19,7 @@ Authentication is session-based. Logging in returns an HttpOnly `SESSION` cookie
 session itself is stored in the `SPRING_SESSION` table via Spring Session JDBC, so it
 survives application restarts. Send the cookie with every subsequent request.
 
-Every endpoint except `/api/register`, `/api/login`, `/api/logout` and
+Every endpoint except `/api/auth/register`, `/api/auth/login`, `/api/auth/logout` and
 `/actuator/health` requires an authenticated session and answers `401` without one.
 
 > CSRF protection and CORS are currently disabled for local testing. Enable both,
@@ -27,19 +27,18 @@ Every endpoint except `/api/register`, `/api/login`, `/api/logout` and
 
 ## API Endpoints
 ### Authentication
-- `POST /api/register` - Creates a new user. Returns `201`, or `409` if the username is taken.
-- `POST /api/login` - Starts a session and sets the `SESSION` cookie. Returns `401` on bad credentials.
-- `POST /api/logout` - Invalidates the session and expires the cookie. Returns `204`.
-- `GET /api/me` - Returns the currently logged in user.
+- `POST /api/auth/register` - Creates a new user. Returns `201`, or `409` if the username is taken.
+- `POST /api/auth/login` - Starts a session and sets the `SESSION` cookie. Returns `401` on bad credentials.
+- `POST /api/auth/logout` - Invalidates the session and expires the cookie. Returns `204`.
 
-### User Management
-- `GET /api/v1/users` - Returns all users.
+### /api/v1/users
+- `GET` - Returns all users.
+- `GET /me` - Returns the currently logged-in user.
+- `GET /me/categories` - Returns the categories of the currently logged-in user.
+- `GET /me/study-sessions` - Returns the study sessions of the currently logged-in user.
 
-### Study Session Management
-- `GET /api/v1/study-sessions/{username}` - Returns all study sessions for the given username.
-- `POST /api/v1/study-sessions` - Creates a new study session.
+### /api/v1/study-sessions
+- `POST` - Creates a new study session for the currently logged-in user.
 
 ### Category Management
-- `GET /api/v1/categories` - Returns all categories.
-- `GET /api/v1/categories/{username}` - Returns categories that belong to the given username.
-- `POST /api/v1/categories/create` - Creates a new category.
+- `POST` - Creates a new category for the currently logged-in user.

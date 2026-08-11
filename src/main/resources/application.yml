@@ -12,7 +12,7 @@ spring:
     username: "postgres"
     password: "secret"
   jpa:
-     hibernate:
+    hibernate:
       ddl-auto: update
   session:
     jdbc:

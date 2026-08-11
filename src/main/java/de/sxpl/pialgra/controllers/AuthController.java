@@ -1,5 +1,6 @@
 package de.sxpl.pialgra.controllers;
 
+import de.sxpl.pialgra.domain.Role;
 import de.sxpl.pialgra.domain.dtos.auth.LoginDto;
 import de.sxpl.pialgra.domain.dtos.user.CreateUserDto;
 import de.sxpl.pialgra.domain.dtos.user.UserDto;
@@ -23,8 +24,10 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -39,6 +42,7 @@ public class AuthController {
     @PostMapping(path = "/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody CreateUserDto createUserDto) {
         UserEntity userEntity = userMapper.entityFromCreateUserDto(createUserDto);
+        userEntity.setRoles(Set.of(Role.ROLE_USER));
         UserEntity savedUserEntity = authService.register(userEntity);
         return new ResponseEntity<>(
                 userMapper.userDtoFromUserEntity(savedUserEntity),
@@ -57,8 +61,7 @@ public class AuthController {
                 loginDto.getPassword()
         );
 
-        // Session fixation protection: drop any pre-existing session before the
-        // authenticated context is written to a new one.
+        // drop any pre-existing session
         HttpSession existingSession = request.getSession(false);
         if (existingSession != null) {
             existingSession.invalidate();
@@ -69,29 +72,18 @@ public class AuthController {
         securityContextHolderStrategy.setContext(context);
         securityContextRepository.saveContext(context, request, response);
 
-        return ResponseEntity.ok(currentUser(authentication.getName()));
+        UserEntity entity = userService
+                .findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return ResponseEntity.ok(userMapper.userDtoFromUserEntity(entity));
     }
 
     @PostMapping(path = "/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session != null) {
-            // Removes the row from SPRING_SESSION and expires the session cookie.
-            session.invalidate();
-        }
+        if (session != null) session.invalidate(); // expires the session cookie.
+
         securityContextHolderStrategy.clearContext();
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping(path = "/me")
-    public ResponseEntity<UserDto> me(Authentication authentication) {
-        return ResponseEntity.ok(currentUser(authentication.getName()));
-    }
-
-    private UserDto currentUser(String username) {
-        return userService
-                .findByUsername(username)
-                .map(userMapper::userDtoFromUserEntity)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }
