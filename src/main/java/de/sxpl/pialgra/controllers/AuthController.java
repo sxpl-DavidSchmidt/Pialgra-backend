@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping(path = "/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody CreateUserDto createUserDto) {
         UserEntity userEntity = userMapper.entityFromCreateUserDto(createUserDto);
-        userEntity.setRoles(Set.of(Role.ROLE_USER));
+        userEntity.setRoles(Set.of(Role.USER));
         UserEntity savedUserEntity = authService.register(userEntity);
         return new ResponseEntity<>(
                 userMapper.userDtoFromUserEntity(savedUserEntity),
@@ -60,12 +60,6 @@ public class AuthController {
                 loginDto.getUsername(),
                 loginDto.getPassword()
         );
-
-        // drop any pre-existing session
-        HttpSession existingSession = request.getSession(false);
-        if (existingSession != null) {
-            existingSession.invalidate();
-        }
 
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(authentication);
