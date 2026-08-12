@@ -36,7 +36,6 @@ public class StudySessionServiceImpl implements StudySessionService {
             StudySessionEntity studySession,
             String username
     ) {
-        log.info("Creating study session for user {}", username);
         UserEntity userEntity = userRepository
                 .findByUsername(username)
                 .orElseThrow();
