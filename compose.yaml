@@ -1,10 +1,31 @@
 services:
   postgres:
-    image: 'postgres:latest'
-    ports:
-      - '127.0.0.1:5432:5432'
-    restart: always
+    image: postgres:17
     environment:
-      - 'POSTGRES_DB=pialgradb'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=postgres'
+      POSTGRES_DB: pialgra
+      POSTGRES_USER: pialgra
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pialgra -d pialgra"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/pialgra
+      DB_USERNAME: pialgra
+      DB_PASSWORD: secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
