@@ -17,11 +17,15 @@ import java.util.Set;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    @Column(nullable = false)
+    @Column(nullable = false, name = "username")
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password")
     private String password;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_picture_id")
+    private ImageEntity profilePicture;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
