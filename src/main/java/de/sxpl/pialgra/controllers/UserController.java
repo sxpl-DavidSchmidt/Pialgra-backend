@@ -24,7 +24,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -119,7 +118,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", "Error reading image"));
         }
 
-        if (width > 512 || height > 512 || width != height) {
+        if (width != height || width > 512) {
             return ResponseEntity.badRequest().body(Map.of("error", "Image must be square and no larger than 512x512"));
         }
 
