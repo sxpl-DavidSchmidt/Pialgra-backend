@@ -1,5 +1,6 @@
 package de.sxpl.pialgra.service;
 
+import de.sxpl.pialgra.domain.entities.ImageEntity;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +13,5 @@ public interface UserService {
     Optional<UserEntity> findByUsername(String username);
     boolean existsByUsername(String username);
     UserEntity createUser(UserEntity user);
+    UserEntity updateProfilePicture(UserEntity user, ImageEntity image);
 }

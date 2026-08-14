@@ -18,13 +18,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final UserRepository userRepository;
 
     @Override
-    public List<CategoryEntity> findAll() {
-        return StreamSupport
-                .stream(categoryRepository.findAll().spliterator(), false)
-                .toList();
-    }
-
-    @Override
     public List<CategoryEntity> findByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
         return StreamSupport

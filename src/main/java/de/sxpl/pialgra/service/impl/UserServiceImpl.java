@@ -1,5 +1,6 @@
 package de.sxpl.pialgra.service.impl;
 
+import de.sxpl.pialgra.domain.entities.ImageEntity;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.repositories.UserRepository;
 import de.sxpl.pialgra.service.UserService;
@@ -12,7 +13,8 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class
+UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -45,5 +47,11 @@ public class UserServiceImpl implements UserService {
             userEntity.setCreatedAt(LocalDate.now());
         }
         return userRepository.save(userEntity);
+    }
+
+    @Override
+    public UserEntity updateProfilePicture(UserEntity user, ImageEntity image) {
+        user.setProfilePicture(image);
+        return userRepository.save(user);
     }
 }
