@@ -29,7 +29,7 @@ class UserServiceImplTests {
 
     @Test
     void createUser_encodesPasswordBeforeSaving() {
-        UserEntity userEntity = new UserEntity("username", "raw-password", null);
+        UserEntity userEntity = new UserEntity("username", "raw-password", null, null, null);
         when(passwordEncoder.encode("raw-password")).thenReturn("{bcrypt}encoded-password");
         when(userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
