@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
         }
         UserEntity createdUser = userService.createUser(user);
 
-        for (String categoryName: List.of("Algebra", "Geometry", "Psychology", "Programming")) {
+        for (String categoryName: List.of("Default")) {
             CategoryEntity category = new CategoryEntity();
             category.setName(categoryName);
             category.setUser(createdUser);
