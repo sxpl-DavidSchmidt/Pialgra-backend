@@ -15,5 +15,7 @@ FROM eclipse-temurin:21-jre-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
+RUN addgroup -S app && adduser -S -G app app
+USER app:app
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

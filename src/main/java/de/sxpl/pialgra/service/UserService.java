@@ -14,4 +14,5 @@ public interface UserService {
     boolean existsByUsername(String username);
     UserEntity createUser(UserEntity user);
     UserEntity updateProfilePicture(UserEntity user, ImageEntity image);
+    ImageEntity getDefaultProfilePicture();
 }

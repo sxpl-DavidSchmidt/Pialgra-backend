@@ -6,6 +6,7 @@ import de.sxpl.pialgra.domain.entities.CategoryEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryDto> createCategory(
-            @RequestBody CreateCategoryDto categoryDto,
+            @Valid @RequestBody CreateCategoryDto categoryDto,
             Authentication authentication
     ) {
         String username = authentication.getName();

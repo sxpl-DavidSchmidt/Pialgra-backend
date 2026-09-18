@@ -23,8 +23,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 
 import java.util.Set;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/auth")
@@ -33,6 +37,12 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final CsrfTokenRepository csrfTokenRepository;
+
+    @GetMapping("/csrf")
+    public Map<String, String> csrf(CsrfToken token) {
+        return Map.of("token", token.getToken(), "headerName", token.getHeaderName());
+    }
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy =
             SecurityContextHolder.getContextHolderStrategy();
@@ -60,6 +70,9 @@ public class AuthController {
                 loginDto.getUsername(),
                 loginDto.getPassword()
         );
+
+        new ChangeSessionIdAuthenticationStrategy().onAuthentication(authentication, request, response);
+        csrfTokenRepository.saveToken(null, request, response);
 
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(authentication);

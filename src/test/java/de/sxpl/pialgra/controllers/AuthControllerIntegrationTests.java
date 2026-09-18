@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,14 +44,14 @@ public class AuthControllerIntegrationTests {
     }
 
     private void register(String username, String password) throws Exception {
-        mockMvc.perform(post("/api/register")
+        mockMvc.perform(post("/api/auth/register").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CreateUserDto(username, password))))
                 .andExpect(status().isCreated());
     }
 
     private Cookie login(String username, String password) throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/login")
+        MvcResult result = mockMvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginDto(username, password))))
                 .andExpect(status().isOk())
@@ -66,7 +67,7 @@ public class AuthControllerIntegrationTests {
     public void registerReturnsCreatedUserWithoutPassword() throws Exception {
         String username = nextUsername();
 
-        mockMvc.perform(post("/api/register")
+        mockMvc.perform(post("/api/auth/register").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CreateUserDto(username, "password123"))))
                 .andExpect(status().isCreated())
@@ -80,7 +81,7 @@ public class AuthControllerIntegrationTests {
         String username = nextUsername();
         register(username, "password123");
 
-        mockMvc.perform(post("/api/register")
+        mockMvc.perform(post("/api/auth/register").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CreateUserDto(username, "password123"))))
                 .andExpect(status().isConflict());
@@ -88,7 +89,7 @@ public class AuthControllerIntegrationTests {
 
     @Test
     public void registerRejectsInvalidPayload() throws Exception {
-        mockMvc.perform(post("/api/register")
+        mockMvc.perform(post("/api/auth/register").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CreateUserDto("ab", "short"))))
                 .andExpect(status().isBadRequest())
@@ -99,7 +100,7 @@ public class AuthControllerIntegrationTests {
     public void registerDoesNotCreateAnAuthenticatedSession() throws Exception {
         String username = nextUsername();
 
-        MvcResult result = mockMvc.perform(post("/api/register")
+        MvcResult result = mockMvc.perform(post("/api/auth/register").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CreateUserDto(username, "password123"))))
                 .andExpect(status().isCreated())
@@ -131,7 +132,7 @@ public class AuthControllerIntegrationTests {
         String username = nextUsername();
         register(username, "password123");
 
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginDto(username, "wrong-password"))))
                 .andExpect(status().isUnauthorized());
@@ -139,7 +140,7 @@ public class AuthControllerIntegrationTests {
 
     @Test
     public void loginRejectsUnknownUser() throws Exception {
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginDto("does-not-exist", "password123"))))
                 .andExpect(status().isUnauthorized());
@@ -147,7 +148,7 @@ public class AuthControllerIntegrationTests {
 
     @Test
     public void meRequiresAnAuthenticatedSession() throws Exception {
-        mockMvc.perform(get("/api/me"))
+        mockMvc.perform(get("/api/v1/users/me"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -157,7 +158,7 @@ public class AuthControllerIntegrationTests {
         register(username, "password123");
         Cookie sessionCookie = login(username, "password123");
 
-        mockMvc.perform(get("/api/me").cookie(sessionCookie))
+        mockMvc.perform(get("/api/v1/users/me").cookie(sessionCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(username))
                 .andExpect(jsonPath("$.createdAt").isNotEmpty());
@@ -169,7 +170,7 @@ public class AuthControllerIntegrationTests {
         register(username, "password123");
         Cookie sessionCookie = login(username, "password123");
 
-        mockMvc.perform(post("/api/logout").cookie(sessionCookie))
+        mockMvc.perform(post("/api/auth/logout").with(csrf()).cookie(sessionCookie))
                 .andExpect(status().isNoContent());
 
         Integer storedSessions = jdbcTemplate.queryForObject(
@@ -179,7 +180,7 @@ public class AuthControllerIntegrationTests {
         );
         assertThat(storedSessions).isZero();
 
-        mockMvc.perform(get("/api/me").cookie(sessionCookie))
+        mockMvc.perform(get("/api/v1/users/me").cookie(sessionCookie))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -193,6 +194,6 @@ public class AuthControllerIntegrationTests {
         Cookie sessionCookie = login(username, "password123");
 
         mockMvc.perform(get("/api/v1/users").cookie(sessionCookie))
-                .andExpect(status().isOk());
+                .andExpect(status().isForbidden());
     }
 }
