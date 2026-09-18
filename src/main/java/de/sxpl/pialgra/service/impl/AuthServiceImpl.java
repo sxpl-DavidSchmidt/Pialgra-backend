@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final CategoryService categoryService;
 
     @Override
+    @Transactional
     public UserEntity register(UserEntity user) {
         if (userService.existsByUsername(user.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken.");
@@ -40,6 +42,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Authentication authenticate(String username, String password) {
+        if (password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Incorrect username or password.");
+        }
         return authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(username, password)
         );

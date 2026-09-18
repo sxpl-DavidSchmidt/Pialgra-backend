@@ -36,6 +36,14 @@ public class StudySessionServiceImpl implements StudySessionService {
             StudySessionEntity studySession,
             String username
     ) {
+        if (studySession.getCategory() == null || studySession.getCategory().getUser() == null
+                || !username.equals(studySession.getCategory().getUser().getUsername())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Category not found");
+        }
+        if (studySession.getStartTime() == null || studySession.getEndTime() == null
+                || !studySession.getEndTime().isAfter(studySession.getStartTime())) {
+            throw new IllegalArgumentException("End time must be after start time.");
+        }
         UserEntity userEntity = userRepository
                 .findByUsername(username)
                 .orElseThrow();

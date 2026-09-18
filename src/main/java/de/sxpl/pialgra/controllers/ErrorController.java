@@ -17,6 +17,15 @@ import java.util.List;
 @RestController
 @ControllerAdvice
 public class ErrorController {
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handleUploadTooLarge() {
+        return ResponseEntity.status(413).body(new ApiErrorResponse(413, "Choose an image no larger than 10 MB.", null));
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleMalformedRequest() {
+        return ResponseEntity.badRequest().body(new ApiErrorResponse(400, "Invalid request. Check the supplied fields and date formats.", null));
+    }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(

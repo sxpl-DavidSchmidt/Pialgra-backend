@@ -3,6 +3,10 @@ package de.sxpl.pialgra.service.impl;
 import de.sxpl.pialgra.domain.entities.ImageEntity;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.repositories.UserRepository;
+import de.sxpl.pialgra.repositories.UserCreationRepository;
+import de.sxpl.pialgra.exceptions.UsernameAlreadyExistsException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 import de.sxpl.pialgra.service.UserService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,10 +22,12 @@ import java.util.stream.StreamSupport;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserCreationRepository userCreationRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserCreationRepository userCreationRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userCreationRepository = userCreationRepository;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserEntity createUser(UserEntity userEntity) {
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         if (userEntity.getCreatedAt() == null) {
@@ -49,22 +56,35 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userEntity.getProfilePicture() == null) {
-            try {
-                ClassPathResource resource = new ClassPathResource("static/images/default_profile_picture.png");
-                byte[] defaultImageData = resource.getContentAsByteArray();
-                ImageEntity defaultImage = new ImageEntity();
-                defaultImage.setImageData(defaultImageData);
-                userEntity.setProfilePicture(defaultImage);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load default profile picture", e);
-            }
+            userEntity.setProfilePicture(getDefaultProfilePicture());
         }
-        return userRepository.save(userEntity);
+        try {
+            return userCreationRepository.insert(userEntity);
+        } catch (DataIntegrityViolationException e) {
+            throw new UsernameAlreadyExistsException("Username is already taken.");
+        }
     }
 
     @Override
     public UserEntity updateProfilePicture(UserEntity user, ImageEntity image) {
-        user.setProfilePicture(image);
+        ImageEntity replacement = image == null ? getDefaultProfilePicture() : image;
+        if (user.getProfilePicture() == null) {
+            user.setProfilePicture(replacement);
+        } else {
+            // Reuse this user's image record so replacing a picture leaves no orphan rows.
+            user.getProfilePicture().setImageData(replacement.getImageData());
+        }
         return userRepository.save(user);
+    }
+
+    @Override
+    public ImageEntity getDefaultProfilePicture() {
+        try {
+            ImageEntity image = new ImageEntity();
+            image.setImageData(new ClassPathResource("static/images/default_profile_picture.png").getContentAsByteArray());
+            return image;
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load default profile picture", e);
+        }
     }
 }

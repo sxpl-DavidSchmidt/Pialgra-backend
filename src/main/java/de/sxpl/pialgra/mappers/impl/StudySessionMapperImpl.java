@@ -13,6 +13,7 @@ import de.sxpl.pialgra.repositories.CategoryRepository;
 import de.sxpl.pialgra.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import java.time.ZoneOffset;
 
 @Component
 @RequiredArgsConstructor
@@ -27,11 +28,11 @@ public class StudySessionMapperImpl implements StudySessionMapper {
 
         CategoryEntity categoryEntity = categoryRepository
                 .findById(createStudySessionDto.getCategoryUuid())
-                .orElseThrow();
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Category not found"));
         studySessionEntity.setCategory(categoryEntity);
 
-        studySessionEntity.setStartTime(createStudySessionDto.getStartTime());
-        studySessionEntity.setEndTime(createStudySessionDto.getEndTime());
+        studySessionEntity.setStartTime(createStudySessionDto.getStartTime().withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime());
+        studySessionEntity.setEndTime(createStudySessionDto.getEndTime().withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime());
         return studySessionEntity;
     }
 
@@ -46,8 +47,8 @@ public class StudySessionMapperImpl implements StudySessionMapper {
         studySessionDto.setUser(userDto);
 
         studySessionDto.setUuid(studySessionEntity.getUuid());
-        studySessionDto.setStartTime(studySessionEntity.getStartTime());
-        studySessionDto.setEndTime(studySessionEntity.getEndTime());
+        studySessionDto.setStartTime(studySessionEntity.getStartTime().atOffset(ZoneOffset.UTC));
+        studySessionDto.setEndTime(studySessionEntity.getEndTime() == null ? null : studySessionEntity.getEndTime().atOffset(ZoneOffset.UTC));
         return studySessionDto;
     }
 }

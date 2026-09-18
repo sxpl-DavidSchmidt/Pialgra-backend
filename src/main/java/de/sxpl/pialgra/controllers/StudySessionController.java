@@ -6,6 +6,7 @@ import de.sxpl.pialgra.domain.entities.StudySessionEntity;
 import de.sxpl.pialgra.mappers.StudySessionMapper;
 import de.sxpl.pialgra.service.StudySessionService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ public class StudySessionController {
 
     @PostMapping
     public ResponseEntity<StudySessionDto> createStudySession(
-            @RequestBody CreateStudySessionDto studySession,
+            @Valid @RequestBody CreateStudySessionDto studySession,
             Authentication authentication
     ) {
         String username = authentication.getName();

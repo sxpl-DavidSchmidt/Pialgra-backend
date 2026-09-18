@@ -30,6 +30,10 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryEntity category,
             String username
     ) {
+        if (category.getName() == null || category.getName().isBlank() || category.getName().length() > 100) {
+            throw new IllegalArgumentException("Category name must contain between 1 and 100 characters.");
+        }
+        category.setName(category.getName().trim());
         UserEntity userEntity = userRepository
                 .findByUsername(username)
                 .orElseThrow();
