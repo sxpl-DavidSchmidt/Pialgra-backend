@@ -10,7 +10,6 @@ import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.mappers.StudySessionMapper;
 import de.sxpl.pialgra.mappers.UserMapper;
 import de.sxpl.pialgra.repositories.CategoryRepository;
-import de.sxpl.pialgra.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.time.ZoneOffset;
