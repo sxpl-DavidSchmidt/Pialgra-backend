@@ -1,0 +1,109 @@
+package de.sxpl.pialgra.controllers;
+
+import de.sxpl.pialgra.domain.entities.*;
+import de.sxpl.pialgra.repositories.*;
+import de.sxpl.pialgra.service.*;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+@WithMockUser("security-owner")
+class SecurityIntegrationTests {
+    @Autowired MockMvc mvc;
+    @Autowired UserService users;
+    @Autowired CategoryService categories;
+    @Autowired StudySessionRepository sessions;
+    @Autowired CategoryRepository categoryRepository;
+    @Autowired EntityManager entityManager;
+    private CategoryEntity own;
+    private CategoryEntity other;
+
+    @BeforeEach
+    void setup() {
+        for (String name : new String[]{"security-owner", "security-other"}) {
+            UserEntity user = new UserEntity();
+            user.setUsername(name);
+            user.setPassword("password123");
+            users.createUser(user);
+        }
+        own = categories.createCategory(new CategoryEntity(null, null, "Own"), "security-owner");
+        other = categories.createCategory(new CategoryEntity(null, null, "Other"), "security-other");
+    }
+
+    private String body(UUID category, String start, String end) {
+        return "{\"categoryUuid\":\"" + category + "\",\"startTime\":\"" + start + "\",\"endTime\":\"" + end + "\"}";
+    }
+
+    @Test
+    void foreignAndMissingCategoriesAreRejectedWithoutLeakingThem() throws Exception {
+        for (UUID category : new UUID[]{other.getUuid(), UUID.randomUUID()}) {
+            mvc.perform(post("/api/v1/study-sessions").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(body(category, "2026-01-01T10:00:00Z", "2026-01-01T10:25:00Z"))).andExpect(status().isNotFound());
+        }
+        assertThat(sessions.findByUser(users.findByUsername("security-owner").orElseThrow())).isEmpty();
+    }
+
+    @Test
+    void validatesInputsAndPreservesUtcInstants() throws Exception {
+        mvc.perform(post("/api/v1/study-sessions").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+            .content(body(own.getUuid(), "2026-01-01T12:00:00+02:00", "2026-01-01T12:25:00+02:00")))
+            .andExpect(status().isCreated()).andExpect(jsonPath("$.startTime").value("2026-01-01T10:00:00Z"));
+        mvc.perform(post("/api/v1/study-sessions").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+            .content(body(own.getUuid(), "2026-01-01T12:00:00Z", "2026-01-01T11:00:00Z"))).andExpect(status().isBadRequest());
+        mvc.perform(post("/api/v1/study-sessions").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+            .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/v1/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"  \"}"))
+            .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/v1/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"" + "x".repeat(101) + "\"}"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void enforcesCsrfAndAdminOnlyAccountListing() throws Exception {
+        mvc.perform(post("/api/v1/categories").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"New\"}"))
+            .andExpect(status().isForbidden());
+        mvc.perform(get("/api/v1/users")).andExpect(status().isForbidden());
+        mvc.perform(get("/api/v1/users").with(user("admin").roles("ADMIN"))).andExpect(status().isOk());
+    }
+
+    @Test
+    void onlyConfiguredOriginsCanMakeCredentialedRequests() throws Exception {
+        mvc.perform(options("/api/v1/categories").header("Origin", "https://untrusted.example")
+            .header("Access-Control-Request-Method", "POST")).andExpect(status().isForbidden());
+        mvc.perform(options("/api/v1/categories").header("Origin", "http://localhost:5173")
+            .header("Access-Control-Request-Method", "POST").header("Access-Control-Request-Headers", "X-CSRF-TOKEN,Content-Type"))
+            .andExpect(status().isOk()).andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
+    }
+
+    @Test
+    void deletingSessionOrCategoryDoesNotDeleteItsParents() {
+        UserEntity owner = users.findByUsername("security-owner").orElseThrow();
+        StudySessionEntity session = sessions.save(new StudySessionEntity(null, owner, own,
+            LocalDateTime.of(2026, 1, 1, 10, 0), LocalDateTime.of(2026, 1, 1, 10, 25)));
+        sessions.delete(session);
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(categoryRepository.findById(own.getUuid())).isPresent();
+        assertThat(users.findByUsername("security-owner")).isPresent();
+        categoryRepository.deleteById(own.getUuid());
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(users.findByUsername("security-owner")).isPresent();
+    }
+}
