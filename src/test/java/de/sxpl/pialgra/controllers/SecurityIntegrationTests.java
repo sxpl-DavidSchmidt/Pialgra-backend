@@ -92,6 +92,49 @@ class SecurityIntegrationTests {
     }
 
     @Test
+    void deletingCategoryKeepsSessionsAndClearsTheirCategory() throws Exception {
+        UserEntity owner = users.findByUsername("security-owner").orElseThrow();
+        LocalDateTime start = LocalDateTime.of(2026, 1, 1, 10, 0);
+        StudySessionEntity first = sessions.save(new StudySessionEntity(null, owner, own, start, start.plusMinutes(25)));
+        StudySessionEntity second = sessions.save(new StudySessionEntity(null, owner, own, start.plusHours(1), start.plusHours(2)));
+        StudySessionEntity untouched = sessions.save(new StudySessionEntity(null, other.getUser(), other, start, start.plusMinutes(10)));
+        mvc.perform(delete("/api/v1/categories/{uuid}", own.getUuid()).with(csrf())).andExpect(status().isNoContent());
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(categoryRepository.findById(own.getUuid())).isEmpty();
+        for (StudySessionEntity original : new StudySessionEntity[]{first, second}) {
+            StudySessionEntity saved = sessions.findById(original.getUuid()).orElseThrow();
+            assertThat(saved.getCategory()).isNull();
+            assertThat(saved.getStartTime()).isEqualTo(original.getStartTime());
+            assertThat(saved.getEndTime()).isEqualTo(original.getEndTime());
+            assertThat(saved.getUser().getUsername()).isEqualTo("security-owner");
+        }
+        assertThat(sessions.findById(untouched.getUuid()).orElseThrow().getCategory().getUuid()).isEqualTo(other.getUuid());
+        mvc.perform(get("/api/v1/users/me/study-sessions")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].category").value(org.hamcrest.Matchers.nullValue()))
+            .andExpect(jsonPath("$[1].category").value(org.hamcrest.Matchers.nullValue()));
+    }
+
+    @Test
+    void deletingEmptyCategoryAndDeletingAgain() throws Exception {
+        mvc.perform(delete("/api/v1/categories/{uuid}", own.getUuid()).with(csrf())).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/categories/{uuid}", own.getUuid()).with(csrf())).andExpect(status().isNotFound());
+        assertThat(users.findByUsername("security-owner")).isPresent();
+    }
+
+    @Test
+    void categoryDeletionRequiresOwnershipAuthenticationAndCsrf() throws Exception {
+        for (UUID uuid : new UUID[]{other.getUuid(), UUID.randomUUID()}) {
+            mvc.perform(delete("/api/v1/categories/{uuid}", uuid).with(csrf())).andExpect(status().isNotFound());
+        }
+        mvc.perform(delete("/api/v1/categories/{uuid}", own.getUuid())).andExpect(status().isForbidden());
+        mvc.perform(delete("/api/v1/categories/{uuid}", own.getUuid()).with(anonymous()).with(csrf())).andExpect(status().isUnauthorized());
+        assertThat(categoryRepository.findById(own.getUuid())).isPresent();
+        assertThat(categoryRepository.findById(other.getUuid())).isPresent();
+    }
+
+    @Test
     void deletingSessionOrCategoryDoesNotDeleteItsParents() {
         UserEntity owner = users.findByUsername("security-owner").orElseThrow();
         StudySessionEntity session = sessions.save(new StudySessionEntity(null, owner, own,

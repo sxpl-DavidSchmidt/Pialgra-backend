@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/v1/categories")
@@ -18,6 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
+
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID uuid, Authentication authentication) {
+        categoryService.deleteCategory(uuid, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping
     public ResponseEntity<CategoryDto> createCategory(
