@@ -18,6 +18,7 @@ public class CategoryMapperImpl implements CategoryMapper {
     public CategoryEntity entityFromCreateCategoryDto(CreateCategoryDto createCategoryDto) {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setName(createCategoryDto.getName());
+        categoryEntity.setColor(createCategoryDto.getColor());
         return categoryEntity;
     }
 
@@ -25,6 +26,7 @@ public class CategoryMapperImpl implements CategoryMapper {
     public CategoryDto categoryDtoFromCategoryEntity(CategoryEntity categoryEntity) {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setName(categoryEntity.getName());
+        categoryDto.setColor(categoryEntity.getColor());
         categoryDto.setUuid(categoryEntity.getUuid());
         categoryDto.setUser(userMapper.userDtoFromUserEntity(categoryEntity.getUser()));
         return categoryDto;

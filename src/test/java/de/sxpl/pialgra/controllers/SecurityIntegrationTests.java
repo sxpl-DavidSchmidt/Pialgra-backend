@@ -42,8 +42,41 @@ class SecurityIntegrationTests {
             user.setPassword("password123");
             users.createUser(user);
         }
-        own = categories.createCategory(new CategoryEntity(null, null, "Own"), "security-owner");
-        other = categories.createCategory(new CategoryEntity(null, null, "Other"), "security-other");
+        own = categories.createCategory(new CategoryEntity(null, null, "Own", null), "security-owner");
+        other = categories.createCategory(new CategoryEntity(null, null, "Other", null), "security-other");
+    }
+
+    @Test
+    void categoryColorIsPersistedAndReturned() throws Exception {
+        mvc.perform(post("/api/v1/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Colored\",\"color\":\"#12AbEF\"}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.color").value("#12AbEF"));
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(categories.findByUsername("security-owner"))
+                .filteredOn(category -> category.getName().equals("Colored"))
+                .singleElement().extracting(CategoryEntity::getColor).isEqualTo("#12AbEF");
+        mvc.perform(get("/api/v1/users/me/categories"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.name == 'Colored')].color").value(org.hamcrest.Matchers.contains("#12AbEF")));
+    }
+
+    @Test
+    void invalidCategoryColorsReturnFieldValidationErrors() throws Exception {
+        for (String color : new String[]{"", "red", "#123", "123456", "#GGGGGG", "#12345678"}) {
+            mvc.perform(post("/api/v1/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\":\"Invalid\",\"color\":\"" + color + "\"}"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors[0].field").value("color"));
+        }
+    }
+
+    @Test
+    void categoryColorRemainsOptional() throws Exception {
+        mvc.perform(post("/api/v1/categories").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Uncolored\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.color").value(org.hamcrest.Matchers.nullValue()));
     }
 
     private String body(UUID category, String start, String end) {

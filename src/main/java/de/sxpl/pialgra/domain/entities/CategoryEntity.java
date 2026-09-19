@@ -1,6 +1,7 @@
 package de.sxpl.pialgra.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,8 @@ public class CategoryEntity {
     private UserEntity user;
 
     private String name;
+
+    @Pattern(regexp = "^#[0-9a-fA-F]{6}$", message = "Color must be a valid HEX color")
+    @Column(length = 7)
+    private String color;
 }

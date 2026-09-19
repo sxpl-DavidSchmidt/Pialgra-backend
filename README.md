@@ -75,3 +75,11 @@ already been committed. Removing the file from tracking does not erase Git histo
 Run `./gradlew test` to check authentication, authorization, validation, image
 handling and persistence. The integration tests use H2; test production database
 and ingress configuration separately before deployment.
+
+## Database migrations
+Flyway manages the application schema; Hibernate validates it at startup.
+Empty databases run `V0__initial_schema.sql` followed by the color migration.
+Existing nonempty databases without Flyway history are baselined at version 0:
+this assumes they already contain the application schema. The color migration
+also preserves an existing color column and its values. Back up an
+existing database before the first migration. Spring Session manages its own tables
