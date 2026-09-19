@@ -39,7 +39,8 @@ public class StudySessionMapperImpl implements StudySessionMapper {
     public StudySessionDto studySessionDtoFromStudySessionEntity(StudySessionEntity studySessionEntity) {
         StudySessionDto studySessionDto = new StudySessionDto();
 
-        CategoryDto categoryDto = categoryMapper.categoryDtoFromCategoryEntity(studySessionEntity.getCategory());
+        CategoryDto categoryDto = studySessionEntity.getCategory() == null ? null
+                : categoryMapper.categoryDtoFromCategoryEntity(studySessionEntity.getCategory());
         studySessionDto.setCategory(categoryDto);
 
         UserDto userDto = userMapper.userDtoFromUserEntity(studySessionEntity.getUser());

@@ -9,6 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+import de.sxpl.pialgra.repositories.StudySessionRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -16,6 +21,16 @@ import java.util.stream.StreamSupport;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final StudySessionRepository studySessionRepository;
+
+    @Override
+    @Transactional
+    public void deleteCategory(UUID categoryUuid, String username) {
+        CategoryEntity category = categoryRepository.findOwnedForUpdate(categoryUuid, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+        studySessionRepository.clearCategory(categoryUuid);
+        categoryRepository.delete(category);
+    }
 
     @Override
     public List<CategoryEntity> findByUsername(String username) {
