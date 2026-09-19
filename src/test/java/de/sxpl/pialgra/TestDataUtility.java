@@ -20,7 +20,8 @@ public class TestDataUtility {
         return new CategoryEntity(
                 null,
                 null,
-                "category"
+                "category",
+                null
         );
     }
 

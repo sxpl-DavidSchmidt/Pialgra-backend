@@ -14,4 +14,5 @@ public class CategoryDto {
     private UUID uuid;
     private UserDto user;
     private String name;
+    private String color;
 }
