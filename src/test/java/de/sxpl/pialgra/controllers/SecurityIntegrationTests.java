@@ -84,6 +84,50 @@ class SecurityIntegrationTests {
     }
 
     @Test
+    void sessionEditingAndDeletionPersistAndProtectOwnership() throws Exception {
+        LocalDateTime start = LocalDateTime.of(2026, 1, 1, 10, 0);
+        StudySessionEntity session = sessions.save(new StudySessionEntity(null, own.getUser(), own, start, start.plusMinutes(25)));
+        StudySessionEntity foreign = sessions.save(new StudySessionEntity(null, other.getUser(), other, start, start.plusMinutes(25)));
+        String path = "/api/v1/study-sessions/" + session.getUuid();
+        String valid = body(own.getUuid(), "2026-01-01T13:00:00+02:00", "2026-01-01T13:30:00+02:00");
+        mvc.perform(put(path).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(valid))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.startTime").value("2026-01-01T11:00:00Z"))
+                .andExpect(jsonPath("$.endTime").value("2026-01-01T11:30:00Z"));
+        for (UUID id : new UUID[]{foreign.getUuid(), UUID.randomUUID()}) {
+            mvc.perform(put("/api/v1/study-sessions/{uuid}", id).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(valid))
+                    .andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/study-sessions/{uuid}", id).with(csrf())).andExpect(status().isNotFound());
+        }
+        mvc.perform(put(path).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(body(other.getUuid(), "2026-01-01T10:00:00Z", "2026-01-01T10:30:00Z")))
+                .andExpect(status().isNotFound());
+        mvc.perform(put(path).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(body(own.getUuid(), "2026-01-01T10:00:00Z", "2026-01-01T09:30:00Z")))
+                .andExpect(status().isBadRequest());
+        mvc.perform(put(path).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valid)).andExpect(status().isForbidden());
+        mvc.perform(delete(path)).andExpect(status().isForbidden());
+        mvc.perform(put(path).with(anonymous()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(valid))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(delete(path).with(anonymous()).with(csrf())).andExpect(status().isUnauthorized());
+        mvc.perform(put(path).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"categoryUuid\":null,\"startTime\":\"2026-01-01T11:00:00Z\",\"endTime\":\"2026-01-01T11:30:00Z\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.category").value(org.hamcrest.Matchers.nullValue()));
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(sessions.findById(session.getUuid()).orElseThrow().getCategory()).isNull();
+        assertThat(sessions.findById(session.getUuid()).orElseThrow().getStartTime()).isEqualTo(start.plusHours(1));
+        mvc.perform(delete(path).with(csrf())).andExpect(status().isNoContent());
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(sessions.findById(session.getUuid())).isEmpty();
+        assertThat(sessions.findById(foreign.getUuid())).isPresent();
+        assertThat(categoryRepository.findById(own.getUuid())).isPresent();
+        assertThat(users.findByUsername("security-owner")).isPresent();
+    }
+
+    @Test
     void foreignAndMissingCategoriesAreRejectedWithoutLeakingThem() throws Exception {
         for (UUID category : new UUID[]{other.getUuid(), UUID.randomUUID()}) {
             mvc.perform(post("/api/v1/study-sessions").with(csrf()).contentType(MediaType.APPLICATION_JSON)

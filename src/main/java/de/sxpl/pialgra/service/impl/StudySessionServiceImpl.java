@@ -22,6 +22,37 @@ public class StudySessionServiceImpl implements StudySessionService {
     private final StudySessionRepository studySessionRepository;
     private final CategoryRepository categoryRepository;
 
+    private StudySessionEntity ownedSession(java.util.UUID uuid, String username) {
+        return studySessionRepository.findById(uuid)
+                .filter(session -> username.equals(session.getUser().getUsername()))
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "Study session not found"));
+    }
+
+    @Override
+    @Transactional
+    public StudySessionEntity updateStudySession(java.util.UUID uuid,
+            de.sxpl.pialgra.domain.dtos.studysession.UpdateStudySessionDto changes, String username) {
+        if (changes.startTime() == null || changes.endTime() == null || !changes.endTime().isAfter(changes.startTime())) {
+            throw new IllegalArgumentException("End time must be after start time.");
+        }
+        // Acquire the category lock before changing the session, as category deletion does.
+        var category = changes.categoryUuid() == null ? null : categoryRepository.findOwnedForUpdate(changes.categoryUuid(), username)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "Category not found"));
+        StudySessionEntity session = ownedSession(uuid, username);
+        session.setCategory(category);
+        session.setStartTime(changes.startTime().withOffsetSameInstant(java.time.ZoneOffset.UTC).toLocalDateTime());
+        session.setEndTime(changes.endTime().withOffsetSameInstant(java.time.ZoneOffset.UTC).toLocalDateTime());
+        return studySessionRepository.save(session);
+    }
+
+    @Override
+    @Transactional
+    public void deleteStudySession(java.util.UUID uuid, String username) {
+        studySessionRepository.delete(ownedSession(uuid, username));
+    }
+
     @Override
     public List<StudySessionEntity> findByUsername(
             String username
