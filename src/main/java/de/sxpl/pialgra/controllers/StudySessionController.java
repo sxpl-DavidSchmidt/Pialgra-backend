@@ -19,6 +19,20 @@ public class StudySessionController {
     private final StudySessionService studySessionService;
     private final StudySessionMapper studySessionMapper;
 
+    @PutMapping("/{uuid}")
+    public StudySessionDto updateStudySession(@PathVariable java.util.UUID uuid,
+            @Valid @RequestBody de.sxpl.pialgra.domain.dtos.studysession.UpdateStudySessionDto changes,
+            Authentication authentication) {
+        return studySessionMapper.studySessionDtoFromStudySessionEntity(
+                studySessionService.updateStudySession(uuid, changes, authentication.getName()));
+    }
+
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteStudySession(@PathVariable java.util.UUID uuid, Authentication authentication) {
+        studySessionService.deleteStudySession(uuid, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping
     public ResponseEntity<StudySessionDto> createStudySession(
             @Valid @RequestBody CreateStudySessionDto studySession,
