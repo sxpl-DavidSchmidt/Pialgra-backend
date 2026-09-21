@@ -3,9 +3,6 @@ package de.sxpl.pialgra.service.impl;
 import de.sxpl.pialgra.domain.entities.ImageEntity;
 import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.repositories.UserRepository;
-import de.sxpl.pialgra.repositories.UserCreationRepository;
-import de.sxpl.pialgra.exceptions.UsernameAlreadyExistsException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 import de.sxpl.pialgra.service.UserService;
 import org.springframework.core.io.ClassPathResource;
@@ -22,12 +19,10 @@ import java.util.stream.StreamSupport;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserCreationRepository userCreationRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserCreationRepository userCreationRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userCreationRepository = userCreationRepository;
     }
 
     @Override
@@ -58,11 +53,7 @@ public class UserServiceImpl implements UserService {
         if (userEntity.getProfilePicture() == null) {
             userEntity.setProfilePicture(getDefaultProfilePicture());
         }
-        try {
-            return userCreationRepository.insert(userEntity);
-        } catch (DataIntegrityViolationException e) {
-            throw new UsernameAlreadyExistsException("Username is already taken.");
-        }
+        return userRepository.save(userEntity);
     }
 
     @Override

@@ -12,9 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -30,12 +27,10 @@ public class AuthServiceImpl implements AuthService {
         }
         UserEntity createdUser = userService.createUser(user);
 
-        for (String categoryName: List.of("Default")) {
-            CategoryEntity category = new CategoryEntity();
-            category.setName(categoryName);
-            category.setUser(createdUser);
-            categoryService.createCategory(category, user.getUsername());
-        }
+        CategoryEntity category = new CategoryEntity();
+        category.setName("Default");
+        category.setUser(createdUser);
+        categoryService.createCategory(category, user.getUsername());
 
         return createdUser;
     }
