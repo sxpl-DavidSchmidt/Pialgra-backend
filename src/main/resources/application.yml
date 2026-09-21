@@ -1,8 +1,5 @@
 server:
   port: 8080
-  servlet:
-    session:
-      timeout: 30m
 spring:
   servlet:
     multipart:
@@ -25,6 +22,7 @@ spring:
   session:
     jdbc:
       initialize-schema: always
+    timeout: 30d
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:8081}
