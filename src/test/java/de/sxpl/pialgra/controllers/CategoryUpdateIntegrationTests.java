@@ -30,7 +30,7 @@ class CategoryUpdateIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("name", "Original", "color", "#0348DD"))))
                 .andExpect(status().isCreated()).andReturn().getResponse();
-        String uuid = json.readTree(created.getContentAsString()).get("uuid").asText();
+        String uuid = json.readTree(created.getContentAsString()).get("uuid").asString();
         String path = "/api/v1/categories/" + uuid;
         String changes = json.writeValueAsString(Map.of("name", "  Renamed  ", "color", "#15803D"));
         mvc.perform(put(path).with(user(owner)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(changes))

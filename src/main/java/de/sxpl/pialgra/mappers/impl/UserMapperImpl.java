@@ -20,14 +20,6 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public UserEntity entityFromUserDto(UserDto userDto) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userDto.getUsername());
-        userEntity.setCreatedAt(userDto.getCreatedAt());
-        return userEntity;
-    }
-
-    @Override
     public UserDto userDtoFromUserEntity(UserEntity userEntity) {
         UserDto userDto = new UserDto();
         userDto.setUsername(userEntity.getUsername());
