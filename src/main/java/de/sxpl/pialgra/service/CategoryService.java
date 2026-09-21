@@ -8,5 +8,6 @@ import java.util.UUID;
 public interface CategoryService {
     List<CategoryEntity> findByUsername(String username);
     CategoryEntity createCategory(CategoryEntity category, String username);
+    CategoryEntity updateCategory(UUID categoryUuid, String name, String color, String username);
     void deleteCategory(UUID categoryUuid, String username);
 }

@@ -2,6 +2,7 @@ package de.sxpl.pialgra.controllers;
 
 import de.sxpl.pialgra.domain.dtos.category.CategoryDto;
 import de.sxpl.pialgra.domain.dtos.category.CreateCategoryDto;
+import de.sxpl.pialgra.domain.dtos.category.UpdateCategoryDto;
 import de.sxpl.pialgra.domain.entities.CategoryEntity;
 import de.sxpl.pialgra.mappers.CategoryMapper;
 import de.sxpl.pialgra.service.CategoryService;
@@ -19,6 +20,17 @@ import java.util.UUID;
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
+
+    @PutMapping("/{uuid}")
+    public ResponseEntity<CategoryDto> updateCategory(
+            @PathVariable UUID uuid,
+            @Valid @RequestBody UpdateCategoryDto categoryDto,
+            Authentication authentication
+    ) {
+        CategoryEntity updated = categoryService.updateCategory(
+                uuid, categoryDto.getName(), categoryDto.getColor(), authentication.getName());
+        return ResponseEntity.ok(categoryMapper.categoryDtoFromCategoryEntity(updated));
+    }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID uuid, Authentication authentication) {
