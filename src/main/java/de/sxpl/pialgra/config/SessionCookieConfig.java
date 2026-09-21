@@ -5,11 +5,6 @@ import org.springframework.boot.session.autoconfigure.DefaultCookieSerializerCus
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Shapes the Spring Session cookie in code rather than via
- * {@code server.servlet.session.cookie.*}, so the flags that authentication depends on
- * cannot be lost by an environment that overrides {@code application.yml}.
- */
 @Configuration
 public class SessionCookieConfig {
 
@@ -19,6 +14,7 @@ public class SessionCookieConfig {
     ) {
         return cookieSerializer -> {
             cookieSerializer.setCookieName("SESSION");
+            cookieSerializer.setCookieMaxAge(30 * 24 * 60 * 60);
             cookieSerializer.setCookiePath("/");
             cookieSerializer.setUseHttpOnlyCookie(true);
             cookieSerializer.setSameSite("Lax");
