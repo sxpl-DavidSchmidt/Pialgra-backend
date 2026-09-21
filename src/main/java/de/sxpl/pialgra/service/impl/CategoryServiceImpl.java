@@ -25,6 +25,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    public CategoryEntity updateCategory(UUID categoryUuid, String name, String color, String username) {
+        CategoryEntity category = categoryRepository.findOwnedForUpdate(categoryUuid, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+        category.setName(name.trim());
+        category.setColor(color);
+        return categoryRepository.save(category);
+    }
+
+    @Override
+    @Transactional
     public void deleteCategory(UUID categoryUuid, String username) {
         CategoryEntity category = categoryRepository.findOwnedForUpdate(categoryUuid, username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
