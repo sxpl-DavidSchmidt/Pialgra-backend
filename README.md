@@ -53,6 +53,10 @@ already been committed. Removing the file from tracking does not erase Git histo
 ### /api/v1/users
 - `GET` - Returns all users (ADMIN only).
 - `GET /me` - Returns the currently logged-in user.
+- `DELETE /me` - Permanently deletes the authenticated account, its profile image,
+  roles, categories and study sessions, and revokes all stored login sessions.
+  Requires a valid CSRF token and returns `204`. This deletes live database data;
+  existing backups and operational logs follow their separate retention policies.
 - `GET /me/categories` - Returns the categories of the currently logged-in user.
 - `GET /me/study-sessions` - Returns the study sessions of the currently logged-in user.
 

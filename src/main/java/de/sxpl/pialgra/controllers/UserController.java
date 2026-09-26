@@ -12,9 +12,11 @@ import de.sxpl.pialgra.mappers.UserMapper;
 import de.sxpl.pialgra.service.CategoryService;
 import de.sxpl.pialgra.service.StudySessionService;
 import de.sxpl.pialgra.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,6 +64,18 @@ public class UserController {
                                 .orElseThrow()
                 )
         );
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteCurrentUser(
+            Authentication authentication,
+            HttpServletRequest request
+    ) {
+        userService.deleteAccount(authentication.getName());
+        var session = request.getSession(false);
+        if (session != null) session.invalidate();
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me/study-sessions")
