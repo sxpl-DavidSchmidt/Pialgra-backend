@@ -11,6 +11,7 @@ public interface UserService {
     Optional<UserEntity> findByUsername(String username);
     boolean existsByUsername(String username);
     UserEntity createUser(UserEntity user);
+    void deleteAccount(String username);
     UserEntity updateProfilePicture(UserEntity user, ImageEntity image);
     ImageEntity getDefaultProfilePicture();
 }
