@@ -4,12 +4,14 @@ import de.sxpl.pialgra.domain.dtos.ApiErrorResponse;
 import de.sxpl.pialgra.exceptions.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
@@ -17,15 +19,20 @@ import java.util.List;
 @RestController
 @ControllerAdvice
 public class ErrorController {
-    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiErrorResponse> handleUploadTooLarge() {
-        return ResponseEntity.status(413).body(new ApiErrorResponse(413, "Choose an image no larger than 10 MB.", null));
+        return ResponseEntity
+                .status(413)
+                .body(new ApiErrorResponse(413, "Choose an image no larger than 10 MB.", null));
     }
 
-    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiErrorResponse> handleMalformedRequest() {
-        return ResponseEntity.badRequest().body(new ApiErrorResponse(400, "Invalid request. Check the supplied fields and date formats.", null));
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(400, "Invalid request. Check the supplied fields and date formats.", null));
     }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
