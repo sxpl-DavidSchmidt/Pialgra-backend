@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.UUID;
 
 @RestController
@@ -33,7 +34,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID uuid, Authentication authentication) {
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable UUID uuid,
+            Authentication authentication
+    ) {
         categoryService.deleteCategory(uuid, authentication.getName());
         return ResponseEntity.noContent().build();
     }
@@ -44,12 +48,8 @@ public class CategoryController {
             Authentication authentication
     ) {
         String username = authentication.getName();
-
-        CategoryEntity entity =
-                categoryMapper.entityFromCreateCategoryDto(categoryDto);
-
-        CategoryEntity savedCategoryEntity =
-                categoryService.createCategory(entity, username);
+        CategoryEntity entity = categoryMapper.entityFromCreateCategoryDto(categoryDto);
+        CategoryEntity savedCategoryEntity = categoryService.createCategory(entity, username);
 
         return new ResponseEntity<>(
                 categoryMapper.categoryDtoFromCategoryEntity(savedCategoryEntity),

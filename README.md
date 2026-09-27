@@ -25,6 +25,19 @@ Authentication is session-based. Logging in returns an HttpOnly `SESSION` cookie
 session itself is stored in the `SPRING_SESSION` table via Spring Session JDBC, so it
 survives application restarts. Send the cookie with every subsequent request.
 
+Login uses a nonpersistent cookie by default and expires server-side 16 hours after
+authentication. To request a persistent 30-day login, send `rememberMe: true` after
+the user selects the optional checkbox explaining the fixed 30-day duration.
+Omitting the flag or sending `false` uses a nonpersistent cookie. No notice-version
+field is required. Both deadlines are absolute: activity does not extend them.
+The session stores the choice, login timestamp and deadline
+alongside the authenticated principal. This evidence is removed with the session
+on logout or by expired-session cleanup. Logout also expires the browser cookie.
+Authenticated sessions from before this policy are invalidated on their next request.
+Retain the fixed checkbox wording in the frontend repository history
+(`src/auth/rememberMeNotice.js`). If the duration or purpose changes later, review
+the consent flow before deploying the change.
+
 The public endpoints are `/api/auth/register`, `/api/auth/login`, `/api/auth/csrf`,
 and `/actuator/health`. Account listing requires the ADMIN role. Other endpoints
 require authentication. All POST/PUT/DELETE requests, including login and

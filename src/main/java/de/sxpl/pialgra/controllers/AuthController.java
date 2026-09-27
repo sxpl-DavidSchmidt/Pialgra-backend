@@ -8,6 +8,7 @@ import de.sxpl.pialgra.domain.entities.UserEntity;
 import de.sxpl.pialgra.mappers.UserMapper;
 import de.sxpl.pialgra.service.AuthService;
 import de.sxpl.pialgra.service.UserService;
+import de.sxpl.pialgra.security.LoginSessionPolicy;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -38,16 +39,13 @@ public class AuthController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CsrfTokenRepository csrfTokenRepository;
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
     @GetMapping("/csrf")
     public Map<String, String> csrf(CsrfToken token) {
         return Map.of("token", token.getToken(), "headerName", token.getHeaderName());
     }
-
-    private final SecurityContextHolderStrategy securityContextHolderStrategy =
-            SecurityContextHolder.getContextHolderStrategy();
-    private final SecurityContextRepository securityContextRepository =
-            new HttpSessionSecurityContextRepository();
 
     @PostMapping(path = "/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody CreateUserDto createUserDto) {
@@ -73,6 +71,7 @@ public class AuthController {
 
         new ChangeSessionIdAuthenticationStrategy().onAuthentication(authentication, request, response);
         csrfTokenRepository.saveToken(null, request, response);
+        LoginSessionPolicy.initialize(request.getSession(true), loginDto.isRememberMe());
 
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(authentication);

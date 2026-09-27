@@ -22,11 +22,10 @@ spring:
   session:
     jdbc:
       initialize-schema: always
-    timeout: 30d
+    timeout: 16h
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:8081}
   session:
     cookie:
-      # Set to true once the API is served over HTTPS.
       secure: ${SESSION_COOKIE_SECURE:false}

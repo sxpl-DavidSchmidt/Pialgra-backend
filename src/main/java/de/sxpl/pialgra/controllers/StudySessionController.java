@@ -2,6 +2,7 @@ package de.sxpl.pialgra.controllers;
 
 import de.sxpl.pialgra.domain.dtos.studysession.CreateStudySessionDto;
 import de.sxpl.pialgra.domain.dtos.studysession.StudySessionDto;
+import de.sxpl.pialgra.domain.dtos.studysession.UpdateStudySessionDto;
 import de.sxpl.pialgra.domain.entities.StudySessionEntity;
 import de.sxpl.pialgra.mappers.StudySessionMapper;
 import de.sxpl.pialgra.service.StudySessionService;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/study-sessions")
 @RequiredArgsConstructor
@@ -20,15 +23,21 @@ public class StudySessionController {
     private final StudySessionMapper studySessionMapper;
 
     @PutMapping("/{uuid}")
-    public StudySessionDto updateStudySession(@PathVariable java.util.UUID uuid,
-            @Valid @RequestBody de.sxpl.pialgra.domain.dtos.studysession.UpdateStudySessionDto changes,
-            Authentication authentication) {
+    public StudySessionDto updateStudySession(
+            @PathVariable UUID uuid,
+            @Valid @RequestBody UpdateStudySessionDto changes,
+            Authentication authentication
+    ) {
         return studySessionMapper.studySessionDtoFromStudySessionEntity(
-                studySessionService.updateStudySession(uuid, changes, authentication.getName()));
+                studySessionService.updateStudySession(uuid, changes, authentication.getName())
+        );
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> deleteStudySession(@PathVariable java.util.UUID uuid, Authentication authentication) {
+    public ResponseEntity<Void> deleteStudySession(
+            @PathVariable UUID uuid,
+            Authentication authentication
+    ) {
         studySessionService.deleteStudySession(uuid, authentication.getName());
         return ResponseEntity.noContent().build();
     }
@@ -39,15 +48,12 @@ public class StudySessionController {
             Authentication authentication
     ) {
         String username = authentication.getName();
-
-        StudySessionEntity entity =
-                studySessionMapper.entityFromCreateStudySessionDto(studySession);
-
-        StudySessionEntity saved =
-                studySessionService.createStudySession(entity, username);
+        StudySessionEntity entity = studySessionMapper.entityFromCreateStudySessionDto(studySession);
+        StudySessionEntity saved = studySessionService.createStudySession(entity, username);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(studySessionMapper.studySessionDtoFromStudySessionEntity(saved));
+                .body(studySessionMapper.studySessionDtoFromStudySessionEntity(saved)
+                );
     }
 }
