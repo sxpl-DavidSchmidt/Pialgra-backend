@@ -20,6 +20,8 @@ class CategoryMigrationTests {
             }
             try (var statement = connection.createStatement()) {
                 statement.execute(schema);
+                statement.execute("INSERT INTO users (username, password, created_at) VALUES ('existing-user', 'hash', CURRENT_DATE)");
+                statement.execute("INSERT INTO user_roles (username, role) VALUES ('existing-user', 'USER')");
                 if (colorAlreadyExists) {
                     statement.execute("ALTER TABLE categories ADD COLUMN color VARCHAR(255)");
                 }
@@ -33,12 +35,20 @@ class CategoryMigrationTests {
             Flyway flyway = Flyway.configure().dataSource(url, "sa", "")
                     .baselineOnMigrate(true).baselineVersion("0")
                     .validateMigrationNaming(true).load();
-            assertThat(flyway.migrate().migrationsExecuted).isEqualTo(1);
+            assertThat(flyway.migrate().migrationsExecuted).isEqualTo(3);
             try (var statement = connection.createStatement();
                  var rows = statement.executeQuery("SELECT name, color FROM categories")) {
                 assertThat(rows.next()).isTrue();
                 assertThat(rows.getString("name")).isEqualTo("Existing");
                 assertThat(rows.getString("color")).isEqualTo(colorAlreadyExists ? "#12AbEF" : null);
+            }
+            try (var tables = connection.getMetaData().getTables(null, null, "user_roles", null)) {
+                assertThat(tables.next()).isFalse();
+            }
+            try (var statement = connection.createStatement();
+                 var rows = statement.executeQuery("SELECT username FROM users")) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getString("username")).isEqualTo("existing-user");
             }
             assertThat(flyway.migrate().migrationsExecuted).isZero();
         }

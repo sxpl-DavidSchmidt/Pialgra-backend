@@ -43,7 +43,6 @@ class AccountDeletionIntegrationTests {
         String name = register();
         String other = register();
         Cookie first = login(name), second = login(name), otherSession = login(other);
-        Object picture = jdbc.queryForObject("SELECT profile_picture_id FROM users WHERE username = ?", UUID.class, name);
         UUID category = UUID.randomUUID();
         jdbc.update("INSERT INTO categories (uuid, user_username, name) VALUES (?, ?, ?)", category, name, "Study");
         jdbc.update("INSERT INTO study_sessions (uuid, user_id, category_id, start_time, end_time) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", UUID.randomUUID(), name, category);
@@ -55,8 +54,6 @@ class AccountDeletionIntegrationTests {
             .andExpect(status().isNoContent()).andReturn().getResponse();
         assertThat(response.getCookie("SESSION").getMaxAge()).isZero();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE username = ?", Integer.class, name)).isZero();
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM user_roles WHERE username = ?", Integer.class, name)).isZero();
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM images WHERE uuid = ?", Integer.class, picture)).isZero();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM categories WHERE user_username = ?", Integer.class, name)).isZero();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM study_sessions WHERE user_id = ?", Integer.class, name)).isZero();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM SPRING_SESSION WHERE PRINCIPAL_NAME = ?", Integer.class, name)).isZero();

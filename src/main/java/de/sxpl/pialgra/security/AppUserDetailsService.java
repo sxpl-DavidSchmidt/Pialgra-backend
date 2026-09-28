@@ -1,6 +1,5 @@
 package de.sxpl.pialgra.security;
 
-import de.sxpl.pialgra.domain.Role;
 import de.sxpl.pialgra.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -21,12 +20,6 @@ public class AppUserDetailsService implements UserDetailsService {
                 .map(userEntity -> User
                         .withUsername(userEntity.getUsername())
                         .password(userEntity.getPassword())
-                        .roles(
-                                userEntity.getRoles()
-                                        .stream()
-                                        .map(Role::name)
-                                        .toArray(String[]::new)
-                        )
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

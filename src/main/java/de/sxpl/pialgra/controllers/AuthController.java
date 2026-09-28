@@ -1,6 +1,5 @@
 package de.sxpl.pialgra.controllers;
 
-import de.sxpl.pialgra.domain.Role;
 import de.sxpl.pialgra.domain.dtos.auth.LoginDto;
 import de.sxpl.pialgra.domain.dtos.user.CreateUserDto;
 import de.sxpl.pialgra.domain.dtos.user.UserDto;
@@ -28,7 +27,6 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 
-import java.util.Set;
 import java.util.Map;
 
 @RestController
@@ -50,7 +48,6 @@ public class AuthController {
     @PostMapping(path = "/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody CreateUserDto createUserDto) {
         UserEntity userEntity = userMapper.entityFromCreateUserDto(createUserDto);
-        userEntity.setRoles(Set.of(Role.USER));
         UserEntity savedUserEntity = authService.register(userEntity);
         return new ResponseEntity<>(
                 userMapper.userDtoFromUserEntity(savedUserEntity),

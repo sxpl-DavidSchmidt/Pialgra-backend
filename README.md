@@ -39,7 +39,7 @@ Retain the fixed checkbox wording in the frontend repository history
 the consent flow before deploying the change.
 
 The public endpoints are `/api/auth/register`, `/api/auth/login`, `/api/auth/csrf`,
-and `/actuator/health`. Account listing requires the ADMIN role. Other endpoints
+and `/actuator/health`. All other endpoints
 require authentication. All POST/PUT/DELETE requests, including login and
 registration, require CSRF protection: first GET `/api/auth/csrf`, retain its
 session cookie, and send the returned `token` using its `headerName`. Obtain a
@@ -64,10 +64,9 @@ already been committed. Removing the file from tracking does not erase Git histo
 - `POST /api/auth/logout` - Invalidates the session and expires the cookie. Returns `204`.
 
 ### /api/v1/users
-- `GET` - Returns all users (ADMIN only).
 - `GET /me` - Returns the currently logged-in user.
 - `DELETE /me` - Permanently deletes the authenticated account,
-  roles, categories and study sessions, and revokes all stored login sessions.
+  categories and study sessions, and revokes all stored login sessions.
   Requires a valid CSRF token and returns `204`. This deletes live database data;
   existing backups and operational logs follow their separate retention policies.
 - `GET /me/categories` - Returns the categories of the currently logged-in user.
@@ -86,7 +85,7 @@ already been committed. Removing the file from tracking does not erase Git histo
 ## Database migrations
 Flyway manages the application schema; Hibernate validates it at startup.
 Empty databases run `V0__initial_schema.sql` followed by all subsequent migrations.
-The latest migration removes obsolete image storage.
+Migrations remove obsolete image storage and the unused user role table.
 Existing nonempty databases without Flyway history are baselined at version 0:
 this assumes they already contain the application schema. The color migration
 also preserves an existing color column and its values. Back up an
@@ -104,7 +103,7 @@ At or after the deadline, login is rejected even if cleanup has not run yet.
 
 The backend scans persisted deadlines every 60 seconds (including after restart),
 deleting up to 100 expired accounts per sweep, each in its own transaction.
-Deletion removes study sessions, categories, roles, the user, and login sessions.
+Deletion removes study sessions, categories, the user, and login sessions.
 Reactivation and cleanup lock the account row so only one can win.
 The interval can be configured with `app.accounts.cleanup-delay-ms`.
 Deletion can be delayed while the backend is offline or while a backlog is processed.

@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@WithMockUser("security-owner")
+@WithMockUser(username = "security-owner", authorities = {})
 class SecurityIntegrationTests {
     @Autowired MockMvc mvc;
     @Autowired UserService users;
@@ -152,11 +152,12 @@ class SecurityIntegrationTests {
     }
 
     @Test
-    void enforcesCsrfAndAdminOnlyAccountListing() throws Exception {
+    void enforcesCsrfAndAuthenticationWithoutAuthorities() throws Exception {
         mvc.perform(post("/api/v1/categories").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"New\"}"))
             .andExpect(status().isForbidden());
-        mvc.perform(get("/api/v1/users")).andExpect(status().isForbidden());
-        mvc.perform(get("/api/v1/users").with(user("admin").roles("ADMIN"))).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/users/me")).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/users/me").with(anonymous())).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v1/users")).andExpect(status().isNotFound());
     }
 
     @Test

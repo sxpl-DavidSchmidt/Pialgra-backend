@@ -186,14 +186,14 @@ public class AuthControllerIntegrationTests {
 
     @Test
     public void otherApiEndpointsRequireAuthentication() throws Exception {
-        mockMvc.perform(get("/api/v1/users"))
+        mockMvc.perform(get("/api/v1/users/me"))
                 .andExpect(status().isUnauthorized());
 
         String username = nextUsername();
         register(username, "password123");
         Cookie sessionCookie = login(username, "password123");
 
-        mockMvc.perform(get("/api/v1/users").cookie(sessionCookie))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/users/me").cookie(sessionCookie))
+                .andExpect(status().isOk());
     }
 }
