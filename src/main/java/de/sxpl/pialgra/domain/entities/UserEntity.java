@@ -23,10 +23,6 @@ public class UserEntity {
     @Column(nullable = false, name = "password")
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_picture_id")
-    private ImageEntity profilePicture;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name ="user_roles", joinColumns = @JoinColumn(name = "username"))

@@ -1,0 +1,2 @@
+ALTER TABLE users DROP COLUMN IF EXISTS profile_picture_id;
+DROP TABLE IF EXISTS images;
