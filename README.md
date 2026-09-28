@@ -111,3 +111,18 @@ The existing `DELETE /api/v1/users/me` endpoint remains available for immediate 
 
 This policy only applies to explicitly deactivated accounts, not all inactive users.
 Database backups and infrastructure logs need separate retention/expiry policies.
+
+## Tests
+
+With Java 21 and Docker running, run `./gradlew test` (in WSL on Windows).
+The four tests in `AuthenticationTests`, `DataIsolationTests`, `StudySessionTests`,
+and `AccountDeletionTests` cover the core interactions. HTTP helpers live in
+`Browser`, and `TestDatabaseConfiguration` supplies the shared database. Each test
+creates its own browser without inheriting a base class. They use real HTTP
+requests and a disposable PostgreSQL 17 container, including the normal database
+migrations. No development database or `.env` setup is needed; the container is
+removed automatically. The first run downloads the Docker image and dependencies.
+
+Keep this suite small: add a test for an important new interaction or a real bug,
+not for every method. Results are in `build/reports/tests/test/index.html`.
+Deactivation/recovery is not tested because it is not implemented in this checkout.
