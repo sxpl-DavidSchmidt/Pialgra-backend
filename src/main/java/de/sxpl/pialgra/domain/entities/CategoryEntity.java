@@ -19,7 +19,6 @@ public class CategoryEntity {
     private UUID uuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "user_id")
     private UserEntity user;
 
     private String name;

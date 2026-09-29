@@ -16,5 +16,5 @@ public interface StudySessionRepository extends CrudRepository<StudySessionEntit
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update StudySessionEntity s set s.category = null where s.category.uuid = :categoryUuid")
-    int clearCategory(@Param("categoryUuid") UUID categoryUuid);
+    void clearCategory(@Param("categoryUuid") UUID categoryUuid);
 }
